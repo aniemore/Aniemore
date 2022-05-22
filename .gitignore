@@ -133,3 +133,7 @@ dmypy.json
 
 # MacOS stuff
 .DS_Store
+
+# used for trainig, search hugging face
+Aniemore/Text/used_for_training
+Aniemore/Text/rubert-tiny2-russian-emotion-detection
