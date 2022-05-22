@@ -1,6 +1,6 @@
 YandexCloud:
   YC_FOLDER_ID: b1g75n4nfd17pefq9el4
   YC_IAM_TOKEN:
-    created_at: 1652721771.729693
-    token: t1.9euelZqamJKVnJSKyM3LyomMjsfIz-3rnpWay52QiZWRlY6Oj8ySzsiOj4rl8_cXeW9r-e8TbT98_N3z91cnbWv57xNtP3z8.WP8hoBaBymgKZNCmSf-aDtNQizoEwJkTAdJK2pphjW5QhmmPCkM8AQ9qI4DW0M_uaEwPUmSQrPJkyCBEHbI3Dw
+    created_at: 1653124657.0721102
+    token: t1.9euelZqQy4ublJrNzsiJjZaZipGWku3rnpWay52QiZWRlY6Oj8ySzsiOj4rl8_dRI11r-e8vU2do_d3z9xFSWmv57y9TZ2j9.kp2W1y-5GADNoxUei3D1jY17u3Rn-TKbp-BZuO0sygop3r_TPdCNKs6Pl0MpqO4oS6Hb1mtLCx2SDIZpqFqEAw
   YC_URL: https://stt.api.cloud.yandex.net/speech/v1/stt:recognize
