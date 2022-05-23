@@ -7,11 +7,12 @@ import torch.nn.functional as F
 from Aniemore.Utils import s2t
 from Aniemore.Voice import Wav2Vec2ForSpeechClassification
 from Aniemore.config import config
+from Aniemore.Utils import MasterModel
 from transformers import Wav2Vec2Config, Wav2Vec2FeatureExtractor, Wav2Vec2Processor
 
 
 # > This class takes in a .wav file and returns the emotion of the speaker
-class EmotionFromVoice:
+class EmotionFromVoice(MasterModel):
     MODEL_URL = config["Huggingface"]["wav2vec2_53_voice"]
     TRC = True
     SAMPLE_RATE = 16000
@@ -22,6 +23,8 @@ class EmotionFromVoice:
     model: Wav2Vec2ForSpeechClassification = None
 
     def __init__(self):
+        super().__init__()
+
         self.device = None
 
     def to(self, device):
@@ -37,9 +40,11 @@ class EmotionFromVoice:
                 "cuda": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
                 "cpu": torch.device("cpu")
             }.get(device, torch.device("cpu"))
+            return self
 
         elif type(device) == torch.device:
             self.device = device
+            return self
 
         else:
             raise ValueError("Unknown acceleration device")
