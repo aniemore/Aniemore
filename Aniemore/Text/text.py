@@ -9,9 +9,8 @@ class EmotionFromText:
     You can see emotion list in config.yml
     """
 
-    LABELS = ['neutral', 'happiness', 'sadness', 'enthusiasm', 'fear', 'anger', 'disgust']
-    tokenizer = AutoTokenizer.from_pretrained('rubert-tiny2-russian-emotion-detection')
-    model = BertForSequenceClassification.from_pretrained('rubert-tiny2-russian-emotion-detection')
+    tokenizer = AutoTokenizer.from_pretrained('Aniemore/rubert-tiny2-russian-emotion-detection')
+    model = BertForSequenceClassification.from_pretrained('Aniemore/rubert-tiny2-russian-emotion-detection')
 
     def __init__(self):
         try:
