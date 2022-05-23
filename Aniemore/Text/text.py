@@ -36,7 +36,7 @@ class EmotionFromText:
         return self.get_label_str(predicted[0])
 
     @torch.no_grad()
-    def predict_emotions(self, text: str) -> list:
+    def predict_emotions(self, text: str) -> dict:
         """
             It takes a string of text, tokenizes it, feeds it to the model, and returns a dictionary of emotions and their
             probabilities
@@ -62,3 +62,5 @@ class EmotionFromText:
         :return: The label string for the given label id.
         """
         return self.configs['Text']['LABELS'][label_id]
+
+

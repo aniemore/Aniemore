@@ -2,4 +2,4 @@ PyYAML~=6.0
 torch~=1.11.0
 requests~=2.27.1
 transformers~=4.19.2
-setuptools~=58.1.0
+setuptools~=62.3.2

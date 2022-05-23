@@ -68,10 +68,6 @@ class SpeechToText:
         return grammar_text
 
     def __get_iam_token(self):
-        """
-        Gets YandexCloud IAM token (lifetime - 12 hours)
-        :return: YandexCloud IAM token from config.yml
-        """
 
         if (
                 self.configs['YandexCloud']['YC_IAM_TOKEN']['token'] is None or
