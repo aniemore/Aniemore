@@ -7,6 +7,21 @@ Text:
     4: fear
     5: anger
     6: disgust
+Voice:
+  labels:
+    0: anger
+    1: disgust
+    2: enthusiasm
+    3: fear
+    4: happiness
+    5: neutral
+    6: sadness
+  preprocess:
+    audio-default-sample: 16000
+    max-audio-duration-millis: 15000
+Huggingface:
+  wav2vec2_53_voice: Aniemore/wav2vec2-xlsr-53-russian-emotion-recognition
+  rubert_tiny2_text: Aniemore/rubert-tiny2-russian-emotion-detection
 YandexCloud:
   YC_FOLDER_ID: b1g75n4nfd17pefq9el4
   YC_IAM_TOKEN:
