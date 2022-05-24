@@ -3,7 +3,6 @@ torch~=1.11.0
 requests~=2.27.1
 transformers~=4.19.2
 setuptools~=62.3.2
-yaml==0.2.5
 torchaudio==0.10.2
 dataclasses==0.8
 datasets==2.2.1
