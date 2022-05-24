@@ -7,3 +7,4 @@ yaml==0.2.5
 torchaudio==0.10.2
 dataclasses==0.8
 datasets==2.2.1
+soundfile==0.10.3.post1
