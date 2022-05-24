@@ -10,7 +10,14 @@ setup(
     name='Aniemore',
     install_requires=requirements,
     version='0.1.0',
-    packages=['Aniemore', 'Aniemore.Text', 'Aniemore.Tests', 'Aniemore.Utils', 'Aniemore.Voice'],
+    packages=['Aniemore', 'Aniemore.Text', 'Aniemore.Tests', 'Aniemore.Utils', 'Aniemore.Voice', 'Aniemore.Datasets'],
+    package_data={
+        "Aniemore": ["*.yml", "*.md"],
+        "Aniemore.Text": ["*.yml", "*.md"],
+        "Aniemore.Voice": ["*.yml", "*.md"],
+        "Aniemore.Datasets": ["*.yml", "*.md"],
+        "Aniemore.Tests": ["*.yml", "*.md"]
+    },
     url='https://github.com/aniemore/Aniemore',
     license='GPL-3.0 license ',
     author='toiletsandpaper',
