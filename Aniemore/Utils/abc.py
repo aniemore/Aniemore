@@ -24,7 +24,7 @@ class MasterModel:
         """
         pass
 
-    def setup(self):
+    def setup_variables(self):
         """
         Setup models, tokenizer, config, processor, feature extractor & etc.
 

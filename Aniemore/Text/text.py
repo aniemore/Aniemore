@@ -9,12 +9,17 @@ class EmotionFromText:
     Using pre-training rubert-tiny2 model on MODIFIED CEDR dataset.
     You can see emotion list in config.yml
     """
+    MODEL_URL = config["Huggingface"]["models"]["rubert_tiny2_text"]
 
-    tokenizer = AutoTokenizer.from_pretrained('Aniemore/rubert-tiny2-russian-emotion-detection')
-    model = BertForSequenceClassification.from_pretrained('Aniemore/rubert-tiny2-russian-emotion-detection')
+    tokenizer: AutoTokenizer = None
+    model: BertForSequenceClassification = None
 
     def __init__(self):
         pass
+
+    def setup_variables(self):
+        self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_URL)
+        self.model = BertForSequenceClassification.from_pretrained(self.MODEL_URL)
 
     @torch.no_grad()
     def predict_emotion(self, text: str) -> str:
@@ -25,6 +30,9 @@ class EmotionFromText:
             :type text: str
             :return: The predicted emotion
         """
+        if self.model is None:
+            self.setup_variables()
+
         inputs = self.tokenizer(text, max_length=512, padding=True, truncation=True, return_tensors='pt')
         outputs = self.model(**inputs)
         predicted = torch.nn.functional.softmax(outputs.logits, dim=1)
@@ -35,13 +43,16 @@ class EmotionFromText:
     @torch.no_grad()
     def predict_emotions(self, text: str) -> dict:
         """
-            It takes a string of text, tokenizes it, feeds it to the model, and returns a dictionary of emotions and their
-            probabilities
+        It takes a string of text, tokenizes it, feeds it to the model, and returns a dictionary of emotions and their
+        probabilities
 
-            :param text: The text you want to classify
-            :type text: str
-            :return: A dictionary of emotions and their probabilities.
+        :param text: The text to be analyzed
+        :type text: str
+        :return: A dictionary of emotions and their probabilities.
         """
+        if self.model is None:
+            self.setup_variables()
+
         inputs = self.tokenizer(text, max_length=512, padding=True, truncation=True, return_tensors='pt')
         outputs = self.model(**inputs)
         predicted = torch.nn.functional.softmax(outputs.logits, dim=1)
