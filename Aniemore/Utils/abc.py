@@ -68,4 +68,8 @@ class MasterDataset:
         ...
 
     def __getitem__(self, key):
+        if self.loaded_dataset is None:
+            self.setup()
+
         return self.loaded_dataset[key]
+

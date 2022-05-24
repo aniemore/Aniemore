@@ -12,3 +12,4 @@ from Aniemore.Text import EmotionFromText
 from Aniemore import Datasets
 from Aniemore.Datasets import datasets
 from Aniemore.Datasets.datasets import Resd
+from Aniemore.Datasets.datasets import Cedr

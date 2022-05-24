@@ -14,7 +14,7 @@ from transformers import Wav2Vec2Config, Wav2Vec2FeatureExtractor, Wav2Vec2Proce
 class EmotionFromVoice(MasterModel):
     MODEL_URL = config["Huggingface"]["models"]["wav2vec2_53_voice"]
     TRC = True
-    SAMPLE_RATE = 16000
+    SAMPLE_RATE = config["Voice"]["preprocess"]["audio-default-sample"]
 
     model_config: Wav2Vec2Config = None
     feature_extractor: Wav2Vec2FeatureExtractor = None
