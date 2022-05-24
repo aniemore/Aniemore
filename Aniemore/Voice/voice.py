@@ -90,7 +90,7 @@ class EmotionFromVoice(MasterModel):
 
         return outputs
 
-    def _predict_many(self, paths: List[str]) -> List[list[str, dict]]:
+    def _predict_many(self, paths: List[str]) -> List[List[str, dict]]:
         """
         > We take a list of paths to audio files, convert them to arrays, pass them through the model, and return a list of
         dictionaries with the probabilities of each emotion
@@ -126,7 +126,7 @@ class EmotionFromVoice(MasterModel):
 
         return outputs
 
-    def predict(self, path: List[str] or str) -> List[dict] or List[list[str, dict]]:
+    def predict(self, path: List[str] or str) -> List[dict] or List[List[str, dict]]:
         """
         If the model is not set up, set it up. If the path is a string, predict one file. If the path is a list, predict
         many files
