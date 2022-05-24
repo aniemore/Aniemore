@@ -59,3 +59,13 @@ class MasterModel:
         :return:
         """
         pass
+
+
+class MasterDataset:
+    loaded_dataset = None
+
+    def setup(self):
+        ...
+
+    def __getitem__(self, key):
+        return self.loaded_dataset[key]

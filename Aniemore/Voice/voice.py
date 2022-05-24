@@ -1,6 +1,5 @@
 from typing import List
 
-import numpy as np
 import torch
 import torchaudio
 import torch.nn.functional as F
@@ -13,7 +12,7 @@ from transformers import Wav2Vec2Config, Wav2Vec2FeatureExtractor, Wav2Vec2Proce
 
 # > This class takes in a .wav file and returns the emotion of the speaker
 class EmotionFromVoice(MasterModel):
-    MODEL_URL = config["Huggingface"]["wav2vec2_53_voice"]
+    MODEL_URL = config["Huggingface"]["models"]["wav2vec2_53_voice"]
     TRC = True
     SAMPLE_RATE = 16000
 

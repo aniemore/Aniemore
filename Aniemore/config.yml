@@ -20,8 +20,11 @@ Voice:
     audio-default-sample: 16000
     max-audio-duration-millis: 15000
 Huggingface:
-  wav2vec2_53_voice: Aniemore/wav2vec2-xlsr-53-russian-emotion-recognition
-  rubert_tiny2_text: Aniemore/rubert-tiny2-russian-emotion-detection
+  models:
+    wav2vec2_53_voice: Aniemore/wav2vec2-xlsr-53-russian-emotion-recognition
+    rubert_tiny2_text: Aniemore/rubert-tiny2-russian-emotion-detection
+  datasets:
+    resd: Aniemore/resd
 YandexCloud:
   YC_FOLDER_ID: b1g75n4nfd17pefq9el4
   YC_IAM_TOKEN:

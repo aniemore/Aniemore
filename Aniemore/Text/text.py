@@ -1,6 +1,7 @@
 import torch
 from transformers import BertForSequenceClassification, AutoTokenizer
 import yaml
+from Aniemore.config import config
 
 
 class EmotionFromText:
@@ -13,11 +14,7 @@ class EmotionFromText:
     model = BertForSequenceClassification.from_pretrained('Aniemore/rubert-tiny2-russian-emotion-detection')
 
     def __init__(self):
-        try:
-            with open('../config.yml', 'r') as config_file:
-                self.configs = yaml.safe_load(config_file)
-        except yaml.YAMLError as ex:
-            print(ex)
+        pass
 
     @torch.no_grad()
     def predict_emotion(self, text: str) -> str:
@@ -53,7 +50,8 @@ class EmotionFromText:
             emotions_dict[self.get_label_str(i)] = predicted.numpy()[0].tolist()[i]
         return emotions_dict
 
-    def get_label_str(self, label_id: int) -> str:
+    @staticmethod
+    def get_label_str(label_id: int) -> str:
         """
         It takes in a label id and returns the corresponding label string
 
@@ -61,6 +59,6 @@ class EmotionFromText:
         :type label_id: int
         :return: The label string for the given label id.
         """
-        return self.configs['Text']['LABELS'][label_id]
+        return config['Text']['LABELS'][label_id]
 
 
