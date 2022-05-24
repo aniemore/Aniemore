@@ -8,7 +8,8 @@ import requests as requests
 
 class SpeechToText:
     """
-    Speech to text main class
+    SpeechToText класс.
+    Обязательно убедитесь, что у вас установлен и настроен YandexCloud-CLI.
     """
 
     configs = {}
@@ -16,10 +17,10 @@ class SpeechToText:
 
     def __init__(self, yandex_cloud_folder_id: str):
         """
-        Init method for SpeechToText.
-        It takes a Yandex Cloud folder ID as an argument and saves it to the config file
+        Конструктор класса. Обязательно убедитесь, что у вас установлен и настроен YandexCloud-CLI.
+        Берём предоставленный YandexCloud FolderID и сохраняем его в config.yml
 
-        :param yandex_cloud_folder_id: the ID of your folder in Yandex.Cloud
+        :param yandex_cloud_folder_id: YandexCloud FolderID
         :type yandex_cloud_folder_id: str
         """
 
@@ -35,18 +36,19 @@ class SpeechToText:
                 yaml.safe_dump(self.configs, config_file)
         except yaml.YAMLError as ex:
             print(ex)
-        # Only Apple M1 fixes, comment if under other OS
-        # torch.backends.quantized.engine = 'qnnpack'
+        # TODO: мб просто функцию сделать для настройки под мак и старой версии торча :\
+        # Только для Apple M1 для версий torch, не использующих GPU. Если под другими процессорами - раскомментировать.
+        torch.backends.quantized.engine = 'qnnpack'
         self.grammar_model, _, _, _, self.apply_te = torch.hub.load(repo_or_dir='snakers4/silero-models',
                                                                     model='silero_te')
 
     def recognize(self, sound_data: bytes) -> dict:
         """
-        We send a POST request to the Yandex Cloud server with the audio file, and get a JSON response with the text
+        Мы отправляем POST запрос на сервер Yandex Cloud, содержащий аудио файл, и получаем JSON строку с текстом
 
-        :param sound_data: binary audio (.ogg file, less than 30s, only 48kHz, only 16 kbps)
+        :param sound_data: binary audio (.ogg файл, короче 30s, только 48kHz и 16kbps)
         :type sound_data: bytes
-        :return: The text of the audio file.
+        :return: текст из аудио файла
         """
         headers = {'Authorization': f'Bearer {self.__get_iam_token()}'}
 
@@ -67,11 +69,11 @@ class SpeechToText:
 
     def echance_text(self, text: str) -> str:
         """
-        It takes a string, applies a grammar to it, and returns the result
+        Получаем строку, добавляем грамматику и возвращаем строку по правилам русского языка
 
-        :param text: The text to be corrected
+        :param text: текст, который нужно подкорректировать
         :type text: str
-        :return: The text is being returned.
+        :return: подкорректированный текст
         """
         text = text.get("result", "").lower()
         grammar_text = self.apply_te(text, lan="ru")
@@ -79,8 +81,9 @@ class SpeechToText:
 
     def __get_iam_token(self):
         """
-        If the token is not set or it's older than 12 hours, create a new one and save it to the config file
-        :return: The token is being returned.
+        Если токена нет в config.yml, или он старше 12 часов -> создаем новый и сохраняем в config.yml,
+        а возвращаем валидный iam токен.
+        :return: YandexCloud IAM-token
         """
         if (
                 self.configs['YandexCloud']['YC_IAM_TOKEN']['token'] is None or
@@ -98,3 +101,4 @@ class SpeechToText:
                 print(ex)
 
         return self.configs['YandexCloud']['YC_IAM_TOKEN']['token']
+

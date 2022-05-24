@@ -6,8 +6,8 @@ from Aniemore.config import config
 
 class EmotionFromText:
     """
-    Using pre-training rubert-tiny2 model on MODIFIED CEDR dataset.
-    You can see emotion list in config.yml
+    Используем уже обученную (на модифированном CEDR датасете) rubert-tiny2 модель.
+    Список эмоций и их ID в модели можете посмотроеть в config.yml
     """
     MODEL_URL = config["Huggingface"]["models"]["rubert_tiny2_text"]
 
@@ -24,11 +24,11 @@ class EmotionFromText:
     @torch.no_grad()
     def predict_emotion(self, text: str) -> str:
         """
-            We take the input text, tokenize it, pass it through the model, and then return the predicted label
+            Получаем строку текста, токенизируем, отправляем в модель и возвращаем эмоцию
 
-            :param text: The text to be classified
+            :param text: текст для анализа
             :type text: str
-            :return: The predicted emotion
+            :return: наиболее вероятная эмоция
         """
         if self.model is None:
             self.setup_variables()
@@ -43,12 +43,11 @@ class EmotionFromText:
     @torch.no_grad()
     def predict_emotions(self, text: str) -> dict:
         """
-        It takes a string of text, tokenizes it, feeds it to the model, and returns a dictionary of emotions and their
-        probabilities
+        Получаем строку текста, токенизируем, отправляем в модель и возвращаем лист "эмоция : вероятность"
 
-        :param text: The text to be analyzed
+        :param text: текст для анализа
         :type text: str
-        :return: A dictionary of emotions and their probabilities.
+        :return: список "эмоция : вероятность"
         """
         if self.model is None:
             self.setup_variables()
@@ -64,11 +63,11 @@ class EmotionFromText:
     @staticmethod
     def get_label_str(label_id: int) -> str:
         """
-        It takes in a label id and returns the corresponding label string
+        Берём цифру, которая выдала модель (label_id) и возвращаем соотвествующую этому ID эмоцию (строкой)
 
-        :param label_id: The label id of the label you want to get the string for
+        :param label_id: label_id который выдала модель
         :type label_id: int
-        :return: The label string for the given label id.
+        :return: строка с эмоцией соотвествующую label_id
         """
         return config['Text']['LABELS'][label_id]
 
