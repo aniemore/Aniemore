@@ -28,11 +28,12 @@ class EmotionFromVoice(MasterModel):
 
     def to(self, device):
         """
-        If the device is a string, then it will be converted to a torch.device object. If the device is a torch.device
-        object, then it will be assigned to self.device. If the device is neither a string nor a torch.device object, then
-        an error will be raised
+        Если устройство является строкой, оно будет преобразовано в объект torch.device. Если устройство является объектом
+        torch.device, то ему будет присвоен атрибут self.device. Если устройство не является ни строкой, ни объектом
+        torch.device, будет выдано сообщение об ошибке.
 
-        :param device: The device to run the model on
+        :param device: Устройство для запуска модели
+        :return: Сам класс.
         """
         if type(device) == str:
             self.device = {
@@ -50,7 +51,7 @@ class EmotionFromVoice(MasterModel):
 
     def setup_variables(self):
         """
-        We're loading the model, the feature extractor, and the processor from the model URL
+        Он устанавливает переменные, которые будут использоваться в программе.
         """
         self.model_config = Wav2Vec2Config.from_pretrained(self.MODEL_URL, trust_remote_code=self.TRC)
         self.feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(self.MODEL_URL)
@@ -60,10 +61,9 @@ class EmotionFromVoice(MasterModel):
     @staticmethod
     def speech_file_to_array_fn(path):
         """
-        It takes a path to a .wav file, loads it, resamples it to 16kHz, and returns the audio as a numpy array
+        Он берет путь к файлу .wav, считывает его и возвращает пустой массив аудиоданных.
 
-        :param path: the path to the audio file
-        :return: The speech array is being returned.
+        :param path: путь к файлу
         """
         speech_array, _sampling_rate = torchaudio.load(path)
         resampler = torchaudio.transforms.Resample(_sampling_rate)
@@ -72,11 +72,11 @@ class EmotionFromVoice(MasterModel):
 
     def _predict_one(self, path: str) -> List[dict]:
         """
-        > We take the audio file, convert it to a tensor, pass it through the model, and return the output
+        Он берет путь к изображению и возвращает список словарей, каждый из которых содержит имя класса и вероятность того,
+        что изображение принадлежит этому классу.
 
-        :param path: The path to the audio file to be predicted
+        :param path: Путь к предсказываемому изображению
         :type path: str
-        :return: A list of dictionaries.
         """
         speech = self.speech_file_to_array_fn(path)
         inputs = self.feature_extractor(speech, sampling_rate=self.SAMPLE_RATE, return_tensors="pt", padding=True)
@@ -92,13 +92,10 @@ class EmotionFromVoice(MasterModel):
 
     def _predict_many(self, paths: List[str]) -> List[List[dict]]:
         """
-        > We take a list of paths to audio files, convert them to arrays, pass them through the model, and return a list of
-        dictionaries with the probabilities of each emotion
+        Он принимает список путей к изображениям и возвращает список прогнозов для каждого изображения.
 
-        :param paths: a list of paths to the audio files you want to predict on
+        :param paths: Список[стр]
         :type paths: List[str]
-        :return: A list of lists, where each list contains the path to the audio file and a dictionary of the scores for
-        each label.
         """
         speeches = []
 
@@ -128,12 +125,11 @@ class EmotionFromVoice(MasterModel):
 
     def predict(self, path: List[str] or str) -> List[dict] or List[List[dict]]:
         """
-        If the model is not set up, set it up. If the path is a string, predict one file. If the path is a list, predict
-        many files
+        > Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
+        словарей
 
-        :param path: The path to the file you want to predict
+        :param path: Путь к изображению, которое вы хотите предсказать
         :type path: List[str] or str
-        :return: A list of dictionaries or a list of lists of strings and dictionaries.
         """
         if self.model is None:
             self.setup_variables()

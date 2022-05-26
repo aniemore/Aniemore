@@ -11,52 +11,45 @@ class MasterModel:
 
     def __init__(self):
         """
-        A constructor.
+        Конструктор.
         """
         pass
 
     def to(self, a):
         """
-        Setup a torch.device
+        Это ничего не делает.
 
-        :param a:
-        :return:
+        :param a: Адрес пункта назначения
         """
         pass
 
     def setup_variables(self):
         """
-        Setup models, tokenizer, config, processor, feature extractor & etc.
 
-        :return:
         """
         pass
 
     def _predict_one(self, a):
         """
-        Returns a List[dict] of prediction logits
 
-        :param a:
-        :return:
+
+        :param a: список входных значений
         """
         pass
 
     def _predict_many(self, a):
         """
-        Returns a List[list[str, dict]] of prediction logits
+        > Эта функция принимает список чисел и возвращает список чисел
 
-        :param a:
-        :return:
+        :param a: Входные данные
         """
         pass
 
     def predict(self, a):
         """
-        Evokes with prediction logits and has logical algorythm about
-        method@_predict_one and method@_predict_many
+        Функция, которая принимает параметр a и ничего не возвращает.
 
-        :param a:
-        :return:
+        :param a: Вход в сеть
         """
         pass
 
@@ -68,6 +61,11 @@ class MasterDataset:
         ...
 
     def __getitem__(self, key):
+        """
+        Возвращает значение ключа в словаре
+
+        :param key: Ключ для поиска в словаре
+        """
         if self.loaded_dataset is None:
             self.setup()
 
