@@ -17,3 +17,17 @@ pip install git+https://github.com/aniemore/Aniemore
 ## Доп. ссылки
 
 Все модели и датасеты, а так же примеры их использования вы можете посмотреть в нашем [HuggingFace профиле](https://huggingface.co/Aniemore)
+
+
+## Citation
+```
+@misc{Aniemore,
+  author = {Артем Аментес, Илья Лубенец, Никита Давидчук},
+  title = {Открытая библиотека искусственного интеллекта для анализа и выявления эмоциональных оттенков речи человека},
+  year = {2022},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/aniemore/Aniemore}},
+  email = {hello@socialcode.ru}
+}
+```
