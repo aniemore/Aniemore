@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import torch
 
 
 class MasterModel:
@@ -13,15 +14,31 @@ class MasterModel:
         """
         Конструктор.
         """
-        pass
+        self.device = torch.device("cpu")
 
-    def to(self, a):
+    def to(self, device):
         """
-        Это ничего не делает.
+        Если устройство является строкой, оно будет преобразовано в объект torch.device. Если устройство является объектом
+        torch.device, то ему будет присвоен атрибут self.device. Если устройство не является ни строкой, ни объектом
+        torch.device, будет выдано сообщение об ошибке.
 
-        :param a: Адрес пункта назначения
+        :param device: Устройство для запуска модели
+        :return: Сам класс.
         """
-        pass
+        if type(device) == str:
+            self.device = {
+                "cuda": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+                "gpu": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+                "cpu": torch.device("cpu")
+            }.get(device, torch.device("cpu"))
+            return self
+
+        elif type(device) == torch.device:
+            self.device = device
+            return self
+
+        else:
+            raise ValueError("Unknown acceleration device")
 
     def setup_variables(self):
         """
@@ -29,7 +46,7 @@ class MasterModel:
         """
         pass
 
-    def _predict_one(self, a):
+    def _predict_one(self, a, single_label):
         """
 
 
@@ -37,7 +54,7 @@ class MasterModel:
         """
         pass
 
-    def _predict_many(self, a):
+    def _predict_many(self, a, single_label):
         """
         > Эта функция принимает список чисел и возвращает список чисел
 
@@ -45,10 +62,11 @@ class MasterModel:
         """
         pass
 
-    def predict(self, a):
+    def predict(self, a, single_label=False):
         """
         Функция, которая принимает параметр a и ничего не возвращает.
 
+        :param single_label: Вернуть единственный предсказанный класс или вероятности всех классов
         :param a: Вход в сеть
         """
         pass

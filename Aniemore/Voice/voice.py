@@ -3,6 +3,7 @@ from typing import List
 import torch
 import torchaudio
 import torch.nn.functional as F
+import numpy as np
 from Aniemore.Utils import s2t
 from Aniemore.Voice import Wav2Vec2ForSpeechClassification
 from Aniemore.config import config
@@ -23,31 +24,6 @@ class EmotionFromVoice(MasterModel):
 
     def __init__(self):
         super().__init__()
-
-        self.device = None
-
-    def to(self, device):
-        """
-        Если устройство является строкой, оно будет преобразовано в объект torch.device. Если устройство является объектом
-        torch.device, то ему будет присвоен атрибут self.device. Если устройство не является ни строкой, ни объектом
-        torch.device, будет выдано сообщение об ошибке.
-
-        :param device: Устройство для запуска модели
-        :return: Сам класс.
-        """
-        if type(device) == str:
-            self.device = {
-                "cuda": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
-                "cpu": torch.device("cpu")
-            }.get(device, torch.device("cpu"))
-            return self
-
-        elif type(device) == torch.device:
-            self.device = device
-            return self
-
-        else:
-            raise ValueError("Unknown acceleration device")
 
     def setup_variables(self):
         """
@@ -70,7 +46,7 @@ class EmotionFromVoice(MasterModel):
         speech = resampler(speech_array).squeeze().numpy()
         return speech
 
-    def _predict_one(self, path: str) -> List[dict]:
+    def _predict_one(self, path: str, single_label) -> List[dict] or List[str]:
         """
         Он берет путь к изображению и возвращает список словарей, каждый из которых содержит имя класса и вероятность того,
         что изображение принадлежит этому классу.
@@ -85,12 +61,19 @@ class EmotionFromVoice(MasterModel):
         with torch.no_grad():
             logits = self.model.to(self.device)(**inputs).logits
 
-        scores = F.softmax(logits, dim=1).detach().cpu().numpy()[0]
-        outputs = [{self.model_config.id2label[i]: v for i, v in enumerate(scores)}]
+        scores = F.softmax(logits, dim=1).detach().cpu()
+
+        if single_label is False:
+            scores = scores.numpy()[0]
+            outputs = [{self.model_config.id2label[i]: v for i, v in enumerate(scores)}]
+
+        else:
+            max_score = torch.argmax(scores, dim=1).numpy()
+            outputs = [self.model_config.id2label[max_score[0]]]
 
         return outputs
 
-    def _predict_many(self, paths: List[str]) -> List[List[dict]]:
+    def _predict_many(self, paths: List[str], single_label) -> List[List[dict]] or List[List[str]]:
         """
         Он принимает список путей к изображениям и возвращает список прогнозов для каждого изображения.
 
@@ -117,13 +100,21 @@ class EmotionFromVoice(MasterModel):
         outputs = []
 
         for _local_path, _local_score in zip(paths, scores):
-            outputs.append(
-                [_local_path, {self.model_config.id2label[i]: v for i, v in enumerate(_local_score)}]
-            )
+            if single_label is False:
+                outputs.append(
+                    [_local_path, {self.model_config.id2label[i]: v for i, v in enumerate(_local_score)}]
+                )
+
+            else:
+                max_score = np.argmax(_local_score)
+                outputs.append(
+                    [_local_path, self.model_config.id2label[max_score]]
+                )
 
         return outputs
 
-    def predict(self, path: List[str] or str) -> List[dict] or List[List[dict]]:
+    def predict(self, path: List[str] or str, single_label=False) -> List[dict] or List[List[dict]] or\
+                                                                     List[str] or List[List[str]]:
         """
         > Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
         словарей
@@ -135,10 +126,10 @@ class EmotionFromVoice(MasterModel):
             self.setup_variables()
 
         if type(path) == str:
-            return self._predict_one(path)
+            return self._predict_one(path, single_label=single_label)
 
         elif type(path) == list:
-            return self._predict_many(path)
+            return self._predict_many(path, single_label=single_label)
 
         else:
             raise ValueError("You need to input list[paths] or one path of your file for prediction")

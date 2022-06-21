@@ -1,10 +1,16 @@
+from typing import List
+
 import torch
-from transformers import BertForSequenceClassification, AutoTokenizer
+import torch.nn.functional as F
+import numpy as np
+from transformers import BertForSequenceClassification, AutoTokenizer, BertConfig
 import yaml
+
+from Aniemore.Utils import MasterModel
 from Aniemore.config import config
 
 
-class EmotionFromText:
+class EmotionFromText(MasterModel):
     """
     Используем уже обученную (на модифированном CEDR датасете) rubert-tiny2 модель.
     Список эмоций и их ID в модели можете посмотроеть в config.yml
@@ -13,35 +19,17 @@ class EmotionFromText:
 
     tokenizer: AutoTokenizer = None
     model: BertForSequenceClassification = None
+    model_config: BertConfig = None
 
     def __init__(self):
-        pass
+        super().__init__()
 
     def setup_variables(self):
         self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_URL)
         self.model = BertForSequenceClassification.from_pretrained(self.MODEL_URL)
+        self.model_config = BertConfig.from_pretrained(self.MODEL_URL)
 
-    @torch.no_grad()
-    def predict_emotion(self, text: str) -> str:
-        """
-            Получаем строку текста, токенизируем, отправляем в модель и возвращаем эмоцию
-
-            :param text: текст для анализа
-            :type text: str
-            :return: наиболее вероятная эмоция
-        """
-        if self.model is None:
-            self.setup_variables()
-
-        inputs = self.tokenizer(text, max_length=512, padding=True, truncation=True, return_tensors='pt')
-        outputs = self.model(**inputs)
-        predicted = torch.nn.functional.softmax(outputs.logits, dim=1)
-        predicted = torch.argmax(predicted, dim=1).numpy()
-
-        return self.get_label_str(predicted[0])
-
-    @torch.no_grad()
-    def predict_emotions(self, text: str) -> dict:
+    def _predict_one(self, text: str, single_label) -> List[dict] or List[str]:
         """
         Получаем строку текста, токенизируем, отправляем в модель и возвращаем лист "эмоция : вероятность"
 
@@ -49,26 +37,73 @@ class EmotionFromText:
         :type text: str
         :return: список "эмоция : вероятность"
         """
+        inputs = self.tokenizer(text, max_length=512, padding=True,
+                                truncation=True, return_tensors='pt').to(self.device)
+
+        with torch.no_grad():
+            logits = self.model.to(self.device)(**inputs).logits
+
+        scores = F.softmax(logits, dim=1)
+
+        if single_label is False:
+            scores = scores.numpy()[0]
+            outputs = [{self.model_config.id2label[i]: v for i, v in enumerate(scores)}]
+
+        else:
+            max_score = torch.argmax(scores, dim=1).numpy()
+            outputs = [self.model_config.id2label[max_score[0]]]
+
+        return outputs
+
+    def _predict_many(self, texts: List[str], single_label) -> List[List[dict]] or List[List[str]]:
+        """
+        Он принимает список текстов и возвращает список прогнозов.
+
+        :param texts: Список[стр]
+        :type texts: List[str]
+        :param single_label: Если True, функция вернет список строк. Если False, он вернет список словарей
+        """
+        inputs = self.tokenizer(texts, max_length=512, padding=True,
+                                truncation=True, return_tensors='pt').to(self.device)
+
+        with torch.no_grad():
+            logits = self.model.to(self.device)(**inputs).logits
+
+        scores = F.softmax(logits, dim=1).detach().cpu().numpy()
+
+        outputs = []
+
+        for _text, _local_score in zip(texts, scores):
+            if single_label is False:
+                outputs.append(
+                    [_text, {self.model_config.id2label[i]: v for i, v in enumerate(_local_score)}]
+                )
+
+            else:
+                max_score = np.argmax(_local_score)
+                outputs.append(
+                    [_text, self.model_config.id2label[max_score]]
+                )
+
+        return outputs
+
+    def predict(self, text: List[str] or str, single_label=False) -> List[dict] or List[List[dict]] or\
+                                                                     List[str] or List[List[str]]:
+        """
+        > Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
+        словарей
+
+        :param path: Путь к изображению, которое вы хотите предсказать
+        :type path: List[str] or str
+        """
         if self.model is None:
             self.setup_variables()
 
-        inputs = self.tokenizer(text, max_length=512, padding=True, truncation=True, return_tensors='pt')
-        outputs = self.model(**inputs)
-        predicted = torch.nn.functional.softmax(outputs.logits, dim=1)
-        emotions_dict = {}
-        for i in range(len(predicted.numpy()[0].tolist())):
-            emotions_dict[self.get_label_str(i)] = predicted.numpy()[0].tolist()[i]
-        return emotions_dict
+        if type(text) == str:
+            return self._predict_one(text, single_label=single_label)
 
-    @staticmethod
-    def get_label_str(label_id: int) -> str:
-        """
-        Берём цифру, которая выдала модель (label_id) и возвращаем соотвествующую этому ID эмоцию (строкой)
+        elif type(text) == list:
+            return self._predict_many(text, single_label=single_label)
 
-        :param label_id: label_id который выдала модель
-        :type label_id: int
-        :return: строка с эмоцией соотвествующую label_id
-        """
-        return config['Text']['LABELS'][label_id]
-
-
+        else:
+            raise ValueError("You need to input list[paths] or one path of your file for prediction")
