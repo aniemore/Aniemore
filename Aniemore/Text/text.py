@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 import torch
 import torch.nn.functional as F
@@ -29,7 +29,7 @@ class EmotionFromText(MasterModel):
         self.model = BertForSequenceClassification.from_pretrained(self.MODEL_URL)
         self.model_config = BertConfig.from_pretrained(self.MODEL_URL)
 
-    def _predict_one(self, text: str, single_label) -> List[dict] or List[str]:
+    def _predict_one(self, text: str, single_label) -> Union[List[dict], List[str]]:
         """
         Получаем строку текста, токенизируем, отправляем в модель и возвращаем лист "эмоция : вероятность"
 
@@ -55,7 +55,7 @@ class EmotionFromText(MasterModel):
 
         return outputs
 
-    def _predict_many(self, texts: List[str], single_label) -> List[List[dict]] or List[List[str]]:
+    def _predict_many(self, texts: List[str], single_label) -> Union[List[List[dict]], List[List[str]]]:
         """
         Он принимает список текстов и возвращает список прогнозов.
 
@@ -87,14 +87,15 @@ class EmotionFromText(MasterModel):
 
         return outputs
 
-    def predict(self, text: List[str] or str, single_label=False) -> List[dict] or List[List[dict]] or\
-                                                                     List[str] or List[List[str]]:
+    def predict(self, text: Union[List[str], str], single_label=False) -> Union[List[dict], List[List[dict]],
+                                                                                List[str], List[List[str]]]:
         """
         > Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
         словарей
 
-        :param path: Путь к изображению, которое вы хотите предсказать
-        :type path: List[str] or str
+        :param single_label: Вернуть наиболее вероятный класс или список классов с вероятностями
+        :param text: Путь к изображению, которое вы хотите предсказать
+        :type text: List[str] or str
         """
         if self.model is None:
             self.setup_variables()
@@ -106,4 +107,4 @@ class EmotionFromText(MasterModel):
             return self._predict_many(text, single_label=single_label)
 
         else:
-            raise ValueError("You need to input list[paths] or one path of your file for prediction")
+            raise ValueError("You need to input list[text] or one text of your file for prediction")

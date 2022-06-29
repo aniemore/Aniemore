@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 import torch
 import torchaudio
@@ -46,7 +46,7 @@ class EmotionFromVoice(MasterModel):
         speech = resampler(speech_array).squeeze().numpy()
         return speech
 
-    def _predict_one(self, path: str, single_label) -> List[dict] or List[str]:
+    def _predict_one(self, path: str, single_label) -> Union[List[dict], List[str]]:
         """
         Он берет путь к изображению и возвращает список словарей, каждый из которых содержит имя класса и вероятность того,
         что изображение принадлежит этому классу.
@@ -73,7 +73,7 @@ class EmotionFromVoice(MasterModel):
 
         return outputs
 
-    def _predict_many(self, paths: List[str], single_label) -> List[List[dict]] or List[List[str]]:
+    def _predict_many(self, paths: List[str], single_label) -> Union[List[List[dict]], List[List[str]]]:
         """
         Он принимает список путей к изображениям и возвращает список прогнозов для каждого изображения.
 
@@ -86,8 +86,8 @@ class EmotionFromVoice(MasterModel):
             speech = self.speech_file_to_array_fn(_path)
             speeches.append(speech)
 
-        features = self.processor(speeches, sampling_rate=self.processor.feature_extractor.sampling_rate,
-                             return_tensors="pt", padding=True)
+        features = self.processor(speeches, sampling_rate=self.feature_extractor.sampling_rate,
+                                  return_tensors="pt", padding=True)
 
         input_values = features.input_values.to(self.device)
         attention_mask = features.attention_mask.to(self.device)
@@ -113,12 +113,13 @@ class EmotionFromVoice(MasterModel):
 
         return outputs
 
-    def predict(self, path: List[str] or str, single_label=False) -> List[dict] or List[List[dict]] or\
-                                                                     List[str] or List[List[str]]:
+    def predict(self, path: Union[List[str], str], single_label=False) -> Union[List[dict], List[List[dict]],
+                                                                                List[str], List[List[str]]]:
         """
         > Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
         словарей
 
+        :param single_label: Вернуть наиболее вероятный класс или список классов с вероятностями
         :param path: Путь к изображению, которое вы хотите предсказать
         :type path: List[str] or str
         """
