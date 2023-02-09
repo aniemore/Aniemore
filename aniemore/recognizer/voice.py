@@ -4,10 +4,10 @@ import torch
 import torchaudio
 import torch.nn.functional as F
 import numpy as np
-from Aniemore.Utils import s2t
-from Aniemore.Voice import Wav2Vec2ForSpeechClassification
-from Aniemore.config import config
-from Aniemore.Utils import MasterModel
+from aniemore.utils import s2t
+from aniemore.recognizer.voice import Wav2Vec2ForSpeechClassification
+from aniemore.config import config
+from aniemore.utils import MasterModel
 from transformers import Wav2Vec2Config, Wav2Vec2FeatureExtractor, Wav2Vec2Processor
 
 

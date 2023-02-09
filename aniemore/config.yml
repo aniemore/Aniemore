@@ -21,12 +21,12 @@ Voice:
     max-audio-duration-millis: 15000
 Huggingface:
   models:
-    wav2vec2_53_voice: Aniemore/wav2vec2-xlsr-53-russian-emotion-recognition
-    rubert_tiny2_text: Aniemore/rubert-tiny2-russian-emotion-detection
+    wav2vec2_53_voice: aniemore/wav2vec2-xlsr-53-russian-emotion-recognition
+    rubert_tiny2_text: aniemore/rubert-tiny2-russian-emotion-detection
     wav2vec2_53_asr: jonatasgrosman/wav2vec2-large-xlsr-53-russian
   datasets:
-    resd: Aniemore/resd
-    cedr-m7: Aniemore/cedr-m7
+    resd: aniemore/resd
+    cedr-m7: aniemore/cedr-m7
 YandexCloud:
   YC_FOLDER_ID: b1g75n4nfd17pefq9el4
   YC_IAM_TOKEN:

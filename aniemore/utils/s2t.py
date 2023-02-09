@@ -5,6 +5,8 @@ from os import popen
 from time import time
 import requests as requests
 
+from aniemore import config
+
 
 class SpeechToText:
     """
@@ -12,7 +14,6 @@ class SpeechToText:
     Обязательно убедитесь, что у вас установлен и настроен YandexCloud-CLI.
     """
 
-    configs = {}
     grammar_model, apply_te = {}, {}
 
     def __init__(self, yandex_cloud_folder_id: str):
@@ -24,6 +25,7 @@ class SpeechToText:
         :type yandex_cloud_folder_id: str
         """
 
+        # TODO:
         try:
             with open('../config.yml', 'r') as config_file:
                 self.configs = yaml.safe_load(config_file)

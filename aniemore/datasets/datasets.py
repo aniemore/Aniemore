@@ -1,6 +1,6 @@
 import datasets
-from Aniemore.Utils import MasterDataset
-from Aniemore.config import config
+from src.Aniemore.utils import MasterDataset
+from src.Aniemore.config import config
 
 
 # > Этот класс загружает набор данных, токенизирует его и бинаризирует метки

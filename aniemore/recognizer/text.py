@@ -6,25 +6,28 @@ import numpy as np
 from transformers import BertForSequenceClassification, AutoTokenizer, BertConfig
 import yaml
 
-from Aniemore.Utils import MasterModel
-from Aniemore.config import config
+from aniemore import config
 
 
-class EmotionFromText(MasterModel):
+class TextRecognizer:
     """
     Используем уже обученную (на модифированном CEDR датасете) rubert-tiny2 модель.
     Список эмоций и их ID в модели можете посмотроеть в config.yml
     """
-    MODEL_URL = config["Huggingface"]["models"]["rubert_tiny2_text"]
+    MODEL_URL = config.HuggingFace.models.rubert_tiny2_text
 
     tokenizer: AutoTokenizer = None
     model: BertForSequenceClassification = None
     model_config: BertConfig = None
+    device: str = None
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, model_url: str = None, device: str = 'cpu', setup_on_init: bool = True) -> None:
+        self.MODEL_URL = model_url if model_url is not None else self.MODEL_URL
+        self.device = device
+        if setup_on_init:
+            self.__setup_variables()
 
-    def setup_variables(self):
+    def __setup_variables(self) -> None:
         self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_URL)
         self.model = BertForSequenceClassification.from_pretrained(self.MODEL_URL)
         self.model_config = BertConfig.from_pretrained(self.MODEL_URL)
@@ -88,7 +91,7 @@ class EmotionFromText(MasterModel):
         return outputs
 
     def predict(self, text: Union[List[str], str], single_label=False) -> Union[List[dict], List[List[dict]],
-                                                                                List[str], List[List[str]]]:
+    List[str], List[List[str]]]:
         """
         > Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
         словарей
@@ -98,7 +101,7 @@ class EmotionFromText(MasterModel):
         :type text: List[str] or str
         """
         if self.model is None:
-            self.setup_variables()
+            self.__setup_variables()
 
         if type(text) == str:
             return self._predict_one(text, single_label=single_label)

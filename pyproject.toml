@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aniemore"
+version = "1.0.1"
+authors = [
+    { name="Ilya Lubenets", email="lii291001@gmail.com" },
+    { name="Nikita Davidchuk", email="ar4ikov228@gmail.com" },
+    { name="Artem Amentes", email="artem@socialcode.ru" }
+]
+description = "Aniemore (Artem Nikita Ilya EMOtion REcognition) is a library for emotion recognition in voice and text for russian language."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/aniemore/Aniemore"
+"Bug Tracker" = "https://github.com/aniemore/Aniemore/issues"
+"Hugging Face Homepage" = "https://huggingface.co/Aniemore"
+
+[tool.pytest.ini_options]
+pythonpath = [
+".", "aniemore",
+]
