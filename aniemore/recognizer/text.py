@@ -1,10 +1,9 @@
+import re
 from typing import List, Union
-
 import torch
 import torch.nn.functional as F
 import numpy as np
 from transformers import BertForSequenceClassification, AutoTokenizer, BertConfig
-import yaml
 
 from aniemore import config
 
@@ -19,13 +18,24 @@ class TextRecognizer:
     tokenizer: AutoTokenizer = None
     model: BertForSequenceClassification = None
     model_config: BertConfig = None
-    device: str = None
+    _device: str = None
 
     def __init__(self, model_url: str = None, device: str = 'cpu', setup_on_init: bool = True) -> None:
         self.MODEL_URL = model_url if model_url is not None else self.MODEL_URL
         self.device = device
         if setup_on_init:
             self.__setup_variables()
+
+    @property
+    def device(self):
+        return self._device
+
+    @device.setter
+    def device(self, value):
+        if value != 'cpu':
+            if re.match(r'^(cuda)(:[0-9]+)?$', value) is None:  # https://regex101.com/r/SGEiYz/2
+                raise ValueError(f"Device must be 'cpu' or 'cuda', or 'cuda:<number>', not {self.device}")
+        self._device = value
 
     def __setup_variables(self) -> None:
         self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_URL)
@@ -93,7 +103,7 @@ class TextRecognizer:
     def predict(self, text: Union[List[str], str], single_label=False) -> Union[List[dict], List[List[dict]],
     List[str], List[List[str]]]:
         """
-        > Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
+        Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
         словарей
 
         :param single_label: Вернуть наиболее вероятный класс или список классов с вероятностями
