@@ -21,30 +21,52 @@ class TextRecognizer:
     _device: str = None
 
     def __init__(self, model_url: str = None, device: str = 'cpu', setup_on_init: bool = True) -> None:
+        """
+        Инициализируем класс
+        :param model_url: одна из моделей из config.py
+        :param device: 'cpu' or 'cuda' or 'cuda:<number>'
+        :param setup_on_init: если True, то сразу загружаем модель и токенайзер в память
+        """
         self.MODEL_URL = model_url if model_url is not None else self.MODEL_URL
         self.device = device
         if setup_on_init:
-            self.__setup_variables()
+            self._setup_variables()
 
     @property
-    def device(self):
+    def device(self) -> str:
+        """
+        Возвращаем устройство, на котором будет работать модель
+
+        :return: 'cpu' or 'cuda' or 'cuda:<number>'
+        """
         return self._device
 
     @device.setter
-    def device(self, value):
+    def device(self, value) -> None:
+        """
+        Устанавливаем устройство, на котором будет работать модель
+
+        :param value: возможные значения: 'cpu', 'cuda', 'cuda:<number>'
+        :return: None or raises ValueError
+        """
         if value != 'cpu':
-            if re.match(r'^(cuda)(:[0-9]+)?$', value) is None:  # https://regex101.com/r/SGEiYz/2
+            if re.match(r'^(cuda)(:\d+)?$', value) is None:  # https://regex101.com/r/SGEiYz/2
                 raise ValueError(f"Device must be 'cpu' or 'cuda', or 'cuda:<number>', not {self.device}")
         self._device = value
 
-    def __setup_variables(self) -> None:
+    def _setup_variables(self) -> None:
+        """
+        [PRIVATE METHOD] Загружаем модель и токенайзер в память
+
+        :return: None
+        """
         self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_URL)
         self.model = BertForSequenceClassification.from_pretrained(self.MODEL_URL)
         self.model_config = BertConfig.from_pretrained(self.MODEL_URL)
 
-    def _predict_one(self, text: str, single_label) -> Union[List[dict], List[str]]:
+    def _predict_one(self, text: str, single_label: bool) -> Union[List[dict], List[str]]:
         """
-        Получаем строку текста, токенизируем, отправляем в модель и возвращаем лист "эмоция : вероятность"
+        [PRIVATE METHOD] Получаем строку текста, токенизируем, отправляем в модель и возвращаем лист "эмоция : вероятность"
 
         :param text: текст для анализа
         :type text: str
@@ -68,9 +90,9 @@ class TextRecognizer:
 
         return outputs
 
-    def _predict_many(self, texts: List[str], single_label) -> Union[List[List[dict]], List[List[str]]]:
+    def _predict_many(self, texts: List[str], single_label: bool) -> Union[List[List[dict]], List[List[str]]]:
         """
-        Он принимает список текстов и возвращает список прогнозов.
+        [PRIVATE METHOD] Он принимает список текстов и возвращает список прогнозов.
 
         :param texts: Список[стр]
         :type texts: List[str]
@@ -111,13 +133,44 @@ class TextRecognizer:
         :type text: List[str] or str
         """
         if self.model is None:
-            self.__setup_variables()
+            self._setup_variables()
 
         if type(text) == str:
             return self._predict_one(text, single_label=single_label)
-
         elif type(text) == list:
             return self._predict_many(text, single_label=single_label)
-
         else:
             raise ValueError("You need to input list[text] or one text of your file for prediction")
+
+
+class TextEnhancer:
+    """
+    Класс для улучшения текста, например, для исправления грамматических ошибок и т.д.
+    """
+    _grammar_model = None
+    _apply_te = None
+
+    def __init__(self, setup_on_init: bool = True) -> None:
+        """
+        Инициализация класса
+        :param setup_on_init: Если True, модель будет загружена при инициализации класса
+        """
+        if setup_on_init:
+            self.load_model()
+
+    def load_model(self) -> None:
+        """
+        Загрузка модели. Если она уже загружена, то ничего не произойдет
+        :return: None
+        """
+        if self._grammar_model is None and self._apply_te is None:
+            self._grammar_model, _, _, _, self._apply_te = torch.hub.load(repo_or_dir='snakers4/silero-models',
+                                                                          model='silero_te')
+
+    def enhance(self, text: str) -> str:
+        """
+        Улучшение текста (исправление грамматических ошибок и т.д.)
+        :param text: Текст, который нужно улучшить
+        :return: Улучшенный текст
+        """
+        return self._apply_te(text.lower(), lan='ru', model=self._grammar_model)

@@ -1,5 +1,5 @@
 import pytest
-from aniemore.recognizer.text import TextRecognizer
+from aniemore.recognizer.text import TextRecognizer, TextEnhancer
 
 
 # TODO: do more test for
@@ -51,3 +51,8 @@ def test_predict_many_sequence_emotions():
            and max(emotions[0][1], key=emotions[0][1].get) == 'happiness' \
            and emotions[1][0] == 'Мама, я не хочу умирать...' \
            and max(emotions[1][1], key=emotions[1][1].get) == 'sadness'
+
+def test_text_enhancement():
+    text_module = TextEnhancer()
+    text = 'какой же сегодня прекрасный день брат'
+    assert text_module.enhance(text) == 'Какой же сегодня прекрасный день, братья'
