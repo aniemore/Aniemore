@@ -52,6 +52,7 @@ def test_predict_many_sequence_emotions():
            and emotions[1][0] == 'Мама, я не хочу умирать...' \
            and max(emotions[1][1], key=emotions[1][1].get) == 'sadness'
 
+
 def test_text_enhancement():
     text_module = TextEnhancer()
     text = 'какой же сегодня прекрасный день брат'

@@ -122,8 +122,8 @@ class TextRecognizer:
 
         return outputs
 
-    def predict(self, text: Union[List[str], str], single_label=False) -> Union[List[dict], List[List[dict]],
-    List[str], List[List[str]]]:
+    def predict(self, text: Union[List[str], str], single_label=False) -> \
+            Union[List[dict], List[List[dict]], List[str], List[List[str]]]:
         """
         Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
         словарей
