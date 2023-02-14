@@ -34,7 +34,7 @@ classifiers = [
 "Hugging Face Homepage" = "https://huggingface.co/Aniemore"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8;<3.11"
 torch = "^1.13.1"
 transformers = "^4.26.1"
 torchaudio = "^0.13.1"
