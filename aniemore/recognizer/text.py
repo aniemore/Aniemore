@@ -121,7 +121,7 @@ class TextRecognizer(BaseClass):
         return tuple(outputs)
 
     def _predict_many(self, texts: List[str], single_label: bool) -> \
-            Union[Tuple[str, Union[str, Any]], Tuple[str, dict]]:
+            tuple[list[str | Any] | list[str | dict], ...]:
         """
         [PRIVATE METHOD] Он принимает список текстов и возвращает список прогнозов.
 
