@@ -135,5 +135,5 @@ dmypy.json
 .DS_Store
 
 # used for trainig, search hugging face
-src/aniemore/Text/used_for_training
-src/aniemore/Text/rubert-tiny2-russian-emotion-detection
+*silero_models.yml
+
