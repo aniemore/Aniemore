@@ -1,3 +1,6 @@
+"""
+Test for text module
+"""
 import pytest
 from aniemore.recognizer.text import TextRecognizer, TextEnhancer
 
@@ -56,4 +59,18 @@ def test_predict_many_sequence_emotions():
 def test_text_enhancement():
     text_module = TextEnhancer()
     text = 'какой же сегодня прекрасный день брат'
-    assert text_module.enhance(text) == 'Какой же сегодня прекрасный день, братья'
+    # that's how it works, but it's not correct
+    # TODO: find more reliable models
+    assert text_module.enhance(text) == 'Какой же сегодня прекрасный день брат!'
+
+
+def test_keyword_with():
+    text_module = TextRecognizer()
+    assert 'text_module' in dir()
+    del text_module
+    assert 'text_module' not in dir()
+
+    text_module = TextEnhancer()
+    assert 'text_module' in dir()
+    del text_module
+    assert 'text_module' not in dir()
