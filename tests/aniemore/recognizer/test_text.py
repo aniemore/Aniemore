@@ -4,7 +4,6 @@ Test for text module
 import pytest
 from aniemore.recognizer.text import TextRecognizer, TextEnhancer
 
-
 # TODO: do more test for
 #   1.  audio
 #   2. yandex cloud speech to text?
@@ -63,14 +62,3 @@ def test_text_enhancement():
     # TODO: find more reliable models
     assert text_module.enhance(text) == 'Какой же сегодня прекрасный день брат!'
 
-
-def test_keyword_with():
-    text_module = TextRecognizer()
-    assert 'text_module' in dir()
-    del text_module
-    assert 'text_module' not in dir()
-
-    text_module = TextEnhancer()
-    assert 'text_module' in dir()
-    del text_module
-    assert 'text_module' not in dir()

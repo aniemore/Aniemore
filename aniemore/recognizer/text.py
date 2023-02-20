@@ -1,6 +1,7 @@
 """
 Модуль для распознавания эмоций в тексте
 """
+import gc
 import re
 import sys
 from typing import List, Union, Tuple, Any, AnyStr
@@ -37,6 +38,14 @@ class TextRecognizer(BaseClass):
         self.device = device
         if setup_on_init:
             self._setup_variables()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.MODEL_URL = None
+        self._device = None
+        self.model = None
+        self.model_config = None
+        self.tokenizer = None
+        super().__exit__(exc_type, exc_val, exc_tb)
 
     @property
     def device(self) -> str:
