@@ -1,7 +1,7 @@
 import pytest
 from aniemore.recognizer.voice import VoiceRecognizer
 from aniemore.config_enums import HuggingFaceModel
-from aniemore.utils.custom_classes import ModelOutput, RecognizerOutputRepr
+from aniemore.utils.classes import ModelOutput, RecognizerOutput, RecognizerOutputTuple
 
 
 def test_create_empty():

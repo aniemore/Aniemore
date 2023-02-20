@@ -1,6 +1,11 @@
-from typing import Union, List, Dict
+from typing import Union, List
 
-from aniemore.utils.custom_classes import BaseRecognizer, ModelOutput,RecognizerOutput, RecognizerOutputRepr
+from aniemore.utils.classes import (
+    BaseRecognizer,
+    ModelOutput,
+    RecognizerOutput,
+    RecognizerOutputTuple
+)
 from aniemore.config_enums import HuggingFaceModel
 import torch
 import torchaudio
@@ -14,7 +19,7 @@ class VoiceRecognizer(BaseRecognizer):
     def __init__(self, model_name: HuggingFaceModel, device: str = 'cpu', setup_on_init: bool = True) -> None:
         """
         Инициализируем класс
-        :param MODEL_URL: одна из моделей из config.py
+        :param model_name: одна из моделей из config.py
         :param device: 'cpu' or 'cuda' or 'cuda:<number>'
         :param setup_on_init: если True, то сразу загружаем модель и токенайзер в память
         """
@@ -83,7 +88,7 @@ class VoiceRecognizer(BaseRecognizer):
 
         return ModelOutput(**scores)
 
-    def _predict_many(self, paths: List[str]) -> RecognizerOutputRepr:
+    def _predict_many(self, paths: List[str]) -> RecognizerOutput:
         """
         Прогнозируем несколько файлов
         :param paths: список путей к файлам
@@ -101,11 +106,11 @@ class VoiceRecognizer(BaseRecognizer):
 
         for path_, score in zip(paths, scores):
             score = {k: v for k, v in zip(self.model.config.id2label.values(), score.tolist())}
-            result.append(RecognizerOutput(path_, ModelOutput(**score)))
+            result.append(RecognizerOutputTuple(path_, ModelOutput(**score)))
 
-        return RecognizerOutputRepr(tuple(result))
+        return RecognizerOutput(tuple(result))
 
-    def predict(self, paths: Union[List[str], str]) -> Union[ModelOutput, RecognizerOutputRepr]:
+    def predict(self, paths: Union[List[str], str]) -> Union[ModelOutput, RecognizerOutput]:
         """
         Прогнозируем файлы
         :param paths: путь к файлу или список путей к файлам

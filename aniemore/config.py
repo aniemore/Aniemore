@@ -9,7 +9,7 @@ from transformers import (
     BertForSequenceClassification
 )
 
-from aniemore.utils.custom_classes import AttributeDict
+from aniemore.utils.classes import AttributeDict
 
 
 @dataclass
