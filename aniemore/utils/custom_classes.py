@@ -9,9 +9,6 @@ from typing import ClassVar, ContextManager, Any, List, Union, TypeAlias, NamedT
 
 
 class AttributeDict(dict):
-    # TODO: Это в целом мусор (сори), используй Enum, он не занимает места больше
-    #  чем хранимый тип
-    #  Либо хранить все в namedtuple
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
@@ -150,4 +147,5 @@ class BaseRecognizer:
 
     def __del__(self):
         self._remove_from_class_handlers()
-        torch.cuda.empty_cache()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()

@@ -52,3 +52,58 @@ def test_context_manager():
 
     # check return type
     assert type(emotion) == dict
+
+
+def test_one_to_many_context_manager():
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2)
+
+    with vr.on_device('cuda:0'):
+        emotion = vr.predict("tests/aniemore/my_voice.ogg")
+
+    # check return type
+    assert type(emotion) == dict
+
+    with vr.on_device('cuda:0'):
+        emotion = vr.predict("tests/aniemore/my_voice.ogg")
+
+    # check return type
+    assert type(emotion) == dict
+
+
+def test_many_to_many_context_manager():
+    vr1 = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2, device='cuda:0')
+    vr2 = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2, device='cuda:0')
+    vr3 = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2, device='cuda:0')
+
+    with vr1.on_device('cuda:0'):
+        # check devices of models in handlers
+        assert vr1.device == 'cuda:0'
+        assert vr2.device == 'cpu'
+        assert vr3.device == 'cpu'
+
+        emotion = vr1.predict("tests/aniemore/my_voice.ogg")
+
+    # check return type
+    assert type(emotion) == dict
+
+    with vr2.on_device('cuda:0'):
+        # check devices of models in handlers
+        assert vr1.device == 'cpu'
+        assert vr2.device == 'cuda:0'
+        assert vr3.device == 'cpu'
+
+        emotion = vr2.predict("tests/aniemore/my_voice.ogg")
+
+    # check return type
+    assert type(emotion) == dict
+
+    with vr3.on_device('cuda:0'):
+        # check devices of models in handlers
+        assert vr1.device == 'cpu'
+        assert vr2.device == 'cpu'
+        assert vr3.device == 'cuda:0'
+
+        emotion = vr3.predict("tests/aniemore/my_voice.ogg")
+
+    # check return type
+    assert type(emotion) == dict
