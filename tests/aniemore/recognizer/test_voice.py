@@ -77,9 +77,9 @@ def test_many_to_many_context_manager():
 
     with vr1.on_device('cuda:0'):
         # check devices of models in handlers
-        assert vr1.device == 'cuda:0'
-        assert vr2.device == 'cpu'
-        assert vr3.device == 'cpu'
+        assert vr1.model.device == 'cuda:0'
+        assert vr2.model.device == 'cpu'
+        assert vr3.model.device == 'cpu'
 
         emotion = vr1.predict("tests/aniemore/my_voice.ogg")
 
@@ -88,9 +88,9 @@ def test_many_to_many_context_manager():
 
     with vr2.on_device('cuda:0'):
         # check devices of models in handlers
-        assert vr1.device == 'cpu'
-        assert vr2.device == 'cuda:0'
-        assert vr3.device == 'cpu'
+        assert vr1.model.device == 'cpu'
+        assert vr2.model.device == 'cuda:0'
+        assert vr3.model.device == 'cpu'
 
         emotion = vr2.predict("tests/aniemore/my_voice.ogg")
 
@@ -99,9 +99,9 @@ def test_many_to_many_context_manager():
 
     with vr3.on_device('cuda:0'):
         # check devices of models in handlers
-        assert vr1.device == 'cpu'
-        assert vr2.device == 'cpu'
-        assert vr3.device == 'cuda:0'
+        assert vr1.model.device == 'cpu'
+        assert vr2.model.device == 'cpu'
+        assert vr3.model.device == 'cuda:0'
 
         emotion = vr3.predict("tests/aniemore/my_voice.ogg")
 
