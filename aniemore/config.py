@@ -1,5 +1,13 @@
 import os
 from dataclasses import dataclass
+from transformers import (
+    Wav2Vec2ForSequenceClassification,
+    WavLMForSequenceClassification,
+    UniSpeechSatForSequenceClassification,
+    HubertForSequenceClassification,
+    AutoModelForSequenceClassification,
+    BertForSequenceClassification
+)
 
 from aniemore.utils.custom_classes import AttributeDict
 
@@ -29,21 +37,51 @@ class Voice:
         'neutral':      5,
         'sadness':      6,
     })
-    preprocess = AttributeDict({
-        'audio-default-sample': 16000,
-        'max-audio-duration-millis': 15000,
-    })
 
 @dataclass
 class HuggingFace:
     models = AttributeDict({
-        'wav2vec2_53_voice': 'aniemore/wav2vec2-xlsr-53-russian-emotion-recognition',
-        'rubert_tiny2_text': 'aniemore/rubert-tiny2-russian-emotion-detection',
-        'wav2vec2_53_asr': 'jonatasgrosman/wav2vec2-large-xlsr-53-russian',
+        'wav2vec2': AttributeDict({
+            'model_url': 'aniemore/wav2vec2-emotion-russian-resd',
+            'model_cls': Wav2Vec2ForSequenceClassification
+        }),
+        'wav2vec2_custom': AttributeDict({
+            'model_url': 'aniemore/wav2vec2-xlsr-53-russian-emotion-recognition',
+            'model_cls': AutoModelForSequenceClassification
+        }),
+        'wavlm': AttributeDict({
+            'model_url': 'aniemore/wavlm-emotion-russian-resd',
+            'model_cls': WavLMForSequenceClassification
+        }),
+        'hubert': AttributeDict({
+            'model_url': 'aniemore/hubert-emotion-russian-resd',
+            'model_cls': HubertForSequenceClassification
+        }),
+        'unispeech': AttributeDict({
+            'model_url': 'aniemore/unispeech-emotion-russian-resd',
+            'model_cls': UniSpeechSatForSequenceClassification
+        }),
+        'rubert_tiny': AttributeDict({
+            'model_url': 'aniemore/rubert-tiny-emotion-russian-cedr-m7',
+            'model_cls': BertForSequenceClassification
+        }),
+        'rubert_base': AttributeDict({
+            'model_url': 'aniemore/rubert-base-emotion-russian-cedr-m7',
+            'model_cls': BertForSequenceClassification
+        }),
+        'rubert_large': AttributeDict({
+            'model_url': 'aniemore/rubert-large-emotion-russian-cedr-m7',
+            'model_cls': BertForSequenceClassification
+        }),
+        'rubert_tiny2': AttributeDict({
+            'model_url': 'aniemore/rubert-tiny2-russian-emotion-detection',
+            'model_cls': BertForSequenceClassification
+        }),
     })
 
     datasets = AttributeDict({
         'resd': 'aniemore/resd',
+        'resd_annotated': 'aniemore/resd-annotated',
         'cedr-m7': 'aniemore/cedr-m7',
     })
 
