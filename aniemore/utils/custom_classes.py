@@ -107,19 +107,19 @@ class BaseRecognizer:
                 # check if the device is already the same
                 if handler.device == device and clear_same_device_cache:
                     # move to cpu
-                    handler.model.to('cpu')
+                    handler.model = handler.model.to('cpu')
+
+            # switch this example to the given device
+            self.model = self.model.to(device)
 
             # clear cuda cache
             if clear_same_device_cache and torch.cuda.is_available():
                 torch.cuda.empty_cache()
 
-            # switch this example to the given device
-            self.model.to(device)
-
             yield
         finally:
             # switch this example to original device
-            self.model.to(self.device)
+            self.model = self.model.to(self.device)
 
             # clear cuda cache
             if clear_cache_after and torch.cuda.is_available():
@@ -127,7 +127,7 @@ class BaseRecognizer:
 
             # get other examples of this class and switch them to their original device
             for handler in self._get_class_handlers():
-                handler.model.to(handler.device)
+                handler.model = handler.model.to(handler.device)
 
             # do garbage collection
             if clear_cache_after:
