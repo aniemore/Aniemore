@@ -1,63 +1,43 @@
-import os
-from dataclasses import dataclass
+from enum import Enum
+from typing import NamedTuple, Type
+from transformers import (
+    Wav2Vec2ForSequenceClassification,
+    WavLMForSequenceClassification,
+    UniSpeechSatForSequenceClassification,
+    HubertForSequenceClassification,
+    AutoModelForSequenceClassification,
+    BertForSequenceClassification,
+    PreTrainedModel
+)
 
-from aniemore.utils.custom_classes import AttributeDict
+
+class Model(NamedTuple):
+    model_cls: Type[PreTrainedModel]
+    model_url: str
 
 
-@dataclass
-class Text:
-    #  'str': int, - for code readability purpose
-    labels = AttributeDict({
-        'neutral':      0,
-        'happiness':    1,
-        'sadness':      2,
-        'enthusiasm':   3,
-        'fear':         4,
-        'anger':        5,
-        'disgust':      6,
-    })
+class Dataset(NamedTuple):
+    dataset_name: str
+    dataset_url: str
 
-@dataclass
-class Voice:
-    #  'str': int, - for code readability purpose
-    labels = AttributeDict({
-        'anger':        0,
-        'disgust':      1,
-        'enthusiasm':   2,
-        'fear':         3,
-        'happiness':    4,
-        'neutral':      5,
-        'sadness':      6,
-    })
-    preprocess = AttributeDict({
-        'audio-default-sample': 16000,
-        'max-audio-duration-millis': 15000,
-    })
 
-@dataclass
-class HuggingFace:
-    models = AttributeDict({
-        'wav2vec2_53_voice': 'aniemore/wav2vec2-xlsr-53-russian-emotion-recognition',
-        'rubert_tiny2_text': 'aniemore/rubert-tiny2-russian-emotion-detection',
-        'wav2vec2_53_asr': 'jonatasgrosman/wav2vec2-large-xlsr-53-russian',
-    })
+class HuggingFaceModel:
+    class Voice(Model, Enum):
+        Wav2Vec2 = Model(Wav2Vec2ForSequenceClassification, 'aniemore/wav2vec2-emotion-russian-resd')
+        Wav2Vec2_Custom = Model(AutoModelForSequenceClassification,
+                                     'aniemore/wav2vec2-xlsr-53-russian-emotion-recognition')
+        WavLM = Model(WavLMForSequenceClassification, 'aniemore/wavlm-emotion-russian-resd')
+        Hubert = Model(HubertForSequenceClassification, 'aniemore/hubert-emotion-russian-resd')
+        UniSpeech = Model(UniSpeechSatForSequenceClassification, 'aniemore/unispeech-emotion-russian-resd')
 
-    datasets = AttributeDict({
-        'resd': 'aniemore/resd',
-        'cedr-m7': 'aniemore/cedr-m7',
-    })
+    class Text(Model, Enum):
+        Bert_Tiny = Model(BertForSequenceClassification, 'aniemore/rubert-tiny-emotion-russian-cedr-m7')
+        Bert_Tiny2 = Model(BertForSequenceClassification, 'aniemore/rubert-tiny-emotion-russian-cedr-m7-2')
+        Bert_Base = Model(BertForSequenceClassification, 'aniemore/rubert-base-emotion-russian-cedr-m7')
+        Bert_Large = Model(BertForSequenceClassification, 'aniemore/rubert-large-emotion-russian-cedr-m7')
 
-@dataclass
-class YandexCloud:
-    # set up your env variables like this:
-    # -------------------------------------------------------------------
-    #       YC_FOLDER_ID = YOUR_FOLDER_ID
-    #       YC_IAM_TOKEN = YOUR_IAM_TOKEN (don't mind about 'created at')
-    # -------------------------------------------------------------------
-    YC_URL = 'https://stt.api.cloud.yandex.net/speech/v1/stt:recognize'
-    YC_FOLDER_ID = os.getenv('YC_FOLDER_ID')
-    YC_IAM_TOKEN = AttributeDict({
-        'created_at': 1653322904.0637176,
-        'token': os.getenv('YC_IAM_TOKEN'),
-    })
 
+class HuggingFaceDataset(Dataset, Enum):
+    RESD = Dataset('Russian Emotional Speech Dialoges', 'aniemore/resd')
+    RESD_ANNOTATED = Dataset('Russian Emotional Speech Dialoges [Annotated]', 'aniemore/resd-annotated')
+    CEDR_M7 = Dataset('Corpus for Emotions Detecting moods 7', 'aniemore/cedr-m7')

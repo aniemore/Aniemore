@@ -194,7 +194,7 @@ class TextEnhancer(BaseClass):
         Загрузка модели. Если она уже загружена, то ничего не произойдет
         :return: None
         """
-        if sys.platform == 'darwin':
+        if sys.platform == 'darwin':  # MacOS check
             warning_text = "Silero models are not supported on MacOS. " + \
                    "To make it work, we've changed torch engine to `qnnpack`. Use this with caution."
             warnings.warn(warning_text, category=UserWarning)
