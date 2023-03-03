@@ -14,6 +14,7 @@ from transformers import BertForSequenceClassification, AutoTokenizer, BertConfi
 from aniemore import config
 from aniemore.utils.custom_classes import BaseClass
 
+# TODO(toiletsandpaper): revork label pick to AutoConfig
 
 class TextRecognizer(BaseClass):
     """
