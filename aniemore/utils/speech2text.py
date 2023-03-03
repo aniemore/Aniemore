@@ -1,8 +1,23 @@
 import whisper
-from typing import NamedTuple, List, Dict
+from typing import NamedTuple, List
+from functools import partial
 
 
 class SpeechSegment(NamedTuple):
+    """
+    Структура для хранения результатов распознавания
+
+    id: локальный номер сегмента
+    seek: смещение в секундах от начала аудио
+    start: время начала сегмента в секундах
+    end: время конца сегмента в секундах
+    text: распознанный текст
+    tokens: список токенов
+    temperature: whisper температура
+    avg_logprob: средняя вероятность
+    no_speech_prob: вероятность отсутствия речи
+    compression_ratio: коэффициент сжатия
+    """
     id: int
     seek: int
     start: float
@@ -16,6 +31,13 @@ class SpeechSegment(NamedTuple):
 
 
 class Speech2TextOutput(NamedTuple):
+    """
+    Структура для хранения результатов распознавания
+
+    text: распознанный текст
+    language: язык
+    segments: список сегментов
+    """
     text: str
     language: str
     segments: List[SpeechSegment]
@@ -23,21 +45,49 @@ class Speech2TextOutput(NamedTuple):
 
 class Speech2Text:
     def __init__(self, model_path: str):
+        """
+        Инициализация модели распознавания речи
+
+        model_path: путь к модели
+        """
         self.model = whisper.load_model(model_path)
 
     def __call__(self, audio_path: str) -> Speech2TextOutput:
+        """
+        Распознать аудио
+
+        audio_path: путь к аудио
+
+        return: результат распознавания
+
+        >>> speech2text = Speech2Text('base')
+        >>> speech2text('audio.wav')
+        """
         return self.recognize(audio_path)
 
     def recognize(self, audio_path: str) -> Speech2TextOutput:
+        """
+        Распознать аудио
+
+        audio_path: путь к аудио
+
+        return: результат распознавания
+
+        >>> speech2text = Speech2Text('base')
+        >>> speech2text.recognize('audio.wav')
+        """
         result = self.model.transcribe(audio_path)
         result['segments'] = [SpeechSegment(**x) for x in result['segments']]
         return Speech2TextOutput(**result)
 
 
-if __name__ == '__main__':
-    model_path = 'small'
-    audio_path = '../recognizer/voice.wav'
+TinySpeech2Text = partial(Speech2Text, 'tiny')
 
-    recognizer = Speech2Text(model_path)
-    print(recognizer(audio_path).segments[0])
-    print(recognizer.recognize(audio_path))
+BaseSpeech2Text = partial(Speech2Text, 'base')
+
+SmallSpeech2Text = partial(Speech2Text, 'small')
+
+MediumSpeech2Text = partial(Speech2Text, 'medium')
+
+LargeSpeech2Text = partial(Speech2Text, 'large')
+

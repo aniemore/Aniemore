@@ -1,7 +1,12 @@
 import pytest
 from aniemore.recognizer.voice import VoiceRecognizer
-from aniemore.config_enums import HuggingFaceModel
-from aniemore.utils.classes import ModelOutput, RecognizerOutput, RecognizerOutputTuple
+from aniemore.utils.speech2text import SmallSpeech2Text, Speech2TextOutput
+from aniemore.config import HuggingFaceModel
+from pathlib import Path
+
+
+TESTS_DIR = Path(__file__).parent.parent
+TEST_VOICE_DATA_PATH = str(TESTS_DIR / 'my_voice.ogg')
 
 
 def test_create_empty():
@@ -10,13 +15,15 @@ def test_create_empty():
 
 
 def test_create_dummy_wav2vec2():
-    vr = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2)
-    assert vr.MODEL_URL == HuggingFaceModel.Wav2Vec2.model_url
-    assert vr.MODEL_CLS == HuggingFaceModel.Wav2Vec2.model_cls
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
+
+    assert vr.MODEL_URL == HuggingFaceModel.Voice.Wav2Vec2.model_url
+
+    assert vr.MODEL_CLS == HuggingFaceModel.Voice.Wav2Vec2.model_cls
 
 
 def test_device_setter():
-    vr = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2)
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
     assert vr.device == 'cpu'
     vr.device = 'cuda'
     assert vr.device == 'cuda'
@@ -29,40 +36,56 @@ def test_device_setter():
 
 
 def test_predict_one_sequence_emotion():
-    vr = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2)
-    emotion = vr.predict("tests/aniemore/my_voice.ogg")
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
+    emotion = vr.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
 
 
 def test_predict_many_sequence_emotion():
-    vr = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2)
-    emotions = vr.predict(["tests/aniemore/my_voice.ogg", "tests/aniemore/my_voice.ogg"])
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
+    emotions = vr.predict([TEST_VOICE_DATA_PATH, TEST_VOICE_DATA_PATH])
+
+    # check return type
+    assert type(emotions) == dict
+
+
+def test_single_label_on_one():
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
+    emotion = vr.predict(TEST_VOICE_DATA_PATH, return_single_label=True)
+
+    # check return type
+    assert type(emotion) == str
+
+
+def test_single_label_on_many():
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
+    emotions = vr.predict([TEST_VOICE_DATA_PATH, TEST_VOICE_DATA_PATH], return_single_label=True)
 
     # check return type
     assert type(emotions) == dict
 
 
 def test_context_manager():
-    vr = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2)
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
 
     with vr.on_device('cuda:0'):
         # check device
         assert str(vr.model.device) == 'cuda:0'
-        emotion = vr.predict("tests/aniemore/my_voice.ogg")
+        emotion = vr.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
 
 
 def test_one_to_many_context_manager():
-    vr = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2)
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
 
     with vr.on_device('cuda:0'):
         # check device
         assert str(vr.model.device) == 'cuda:0'
-        emotion = vr.predict("tests/aniemore/my_voice.ogg")
+        emotion = vr.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -70,16 +93,16 @@ def test_one_to_many_context_manager():
     with vr.on_device('cuda:0'):
         # check device
         assert str(vr.model.device) == 'cuda:0'
-        emotion = vr.predict("tests/aniemore/my_voice.ogg")
+        emotion = vr.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
 
 
 def test_many_to_many_context_manager():
-    vr1 = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2, device='cuda:0')
-    vr2 = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2, device='cuda:0')
-    vr3 = VoiceRecognizer(model_name=HuggingFaceModel.Wav2Vec2, device='cuda:0')
+    vr1 = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2, device='cuda:0')
+    vr2 = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2, device='cuda:0')
+    vr3 = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2, device='cuda:0')
 
     with vr1.on_device('cuda:0'):
         # check devices of models in handlers
@@ -87,7 +110,7 @@ def test_many_to_many_context_manager():
         assert str(vr2.model.device) == 'cpu'
         assert str(vr3.model.device) == 'cpu'
 
-        emotion = vr1.predict("tests/aniemore/my_voice.ogg")
+        emotion = vr1.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -98,7 +121,7 @@ def test_many_to_many_context_manager():
         assert str(vr2.model.device) == 'cuda:0'
         assert str(vr3.model.device) == 'cpu'
 
-        emotion = vr2.predict("tests/aniemore/my_voice.ogg")
+        emotion = vr2.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -109,7 +132,22 @@ def test_many_to_many_context_manager():
         assert str(vr2.model.device) == 'cpu'
         assert str(vr3.model.device) == 'cuda:0'
 
-        emotion = vr3.predict("tests/aniemore/my_voice.ogg")
+        emotion = vr3.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
+
+
+def test_load_speech_to_text():
+    s2t_model = SmallSpeech2Text()
+
+    assert s2t_model(TEST_VOICE_DATA_PATH).language == 'ru'
+
+
+def test_switch_model():
+    vr = VoiceRecognizer(model_name=HuggingFaceModel.Voice.Wav2Vec2)
+
+    assert vr.MODEL_URL == HuggingFaceModel.Voice.Wav2Vec2.model_url
+
+    with vr.with_model(HuggingFaceModel.Voice.WavLM, device='cpu') as new_vr:
+        assert new_vr.MODEL_URL == HuggingFaceModel.Voice.WavLM.model_url
