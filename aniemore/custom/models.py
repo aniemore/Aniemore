@@ -1,3 +1,5 @@
+"""Base model classes
+"""
 from dataclasses import dataclass
 import torch
 from transformers.utils import ModelOutput
@@ -18,7 +20,7 @@ class SpeechModelOutput(ModelOutput):
     attentions: torch.FloatTensor = None
 
 
-class BaseModelForVoiceClassification(PreTrainedModel):
+class BaseModelForVoiceClassification(PreTrainedModel):  # noqa
     def __init__(self, config, num_labels):
         super().__init__(config=config)
         self.num_labels = num_labels
@@ -26,8 +28,9 @@ class BaseModelForVoiceClassification(PreTrainedModel):
         self.projector = torch.nn.Linear(config.hidden_size, config.classifier_proj_size)
         self.classifier = torch.nn.Linear(config.classifier_proj_size, config.num_labels)
 
-    @staticmethod
+    @classmethod
     def merged_strategy(
+            cls,
             hidden_states,
             mode="mean"
     ):
@@ -103,28 +106,28 @@ class BaseModelForVoiceClassification(PreTrainedModel):
         )
 
 
-class Wav2Vec2ForVoiceClassification(BaseModelForVoiceClassification):
+class Wav2Vec2ForVoiceClassification(BaseModelForVoiceClassification):  # noqa
     def __init__(self, config, num_labels):
         super().__init__(config, num_labels)
         self.wav2vec2 = Wav2Vec2ForSequenceClassification(config)
         self.init_weights()
 
 
-class WavLMForVoiceClassification(BaseModelForVoiceClassification):
+class WavLMForVoiceClassification(BaseModelForVoiceClassification):  # noqa
     def __init__(self, config, num_labels):
         super().__init__(config, num_labels)
         self.wavlm = WavLMForSequenceClassification(config)
         self.init_weights()
 
 
-class UniSpeechSatForVoiceClassification(BaseModelForVoiceClassification):
+class UniSpeechSatForVoiceClassification(BaseModelForVoiceClassification):  # noqa
     def __init__(self, config, num_labels):
         super().__init__(config, num_labels)
         self.unispeech_sat = UniSpeechSatForSequenceClassification(config)
         self.init_weights()
 
 
-class HubertForVoiceClassification(BaseModelForVoiceClassification):
+class HubertForVoiceClassification(BaseModelForVoiceClassification):  # noqa
     def __init__(self, config, num_labels):
         super().__init__(config, num_labels)
         self.hubert = HubertForSequenceClassification(config)

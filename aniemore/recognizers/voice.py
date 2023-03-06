@@ -1,6 +1,8 @@
 from typing import Union, List
-
 import numpy
+import torch
+import torchaudio
+from transformers import AutoFeatureExtractor, AutoModelForSequenceClassification, AutoConfig
 
 from aniemore.utils.classes import (
     BaseRecognizer,
@@ -8,47 +10,16 @@ from aniemore.utils.classes import (
     RecognizerOutputMany,
     RecognizerOutputTuple
 )
-from aniemore.config import Model
-import torch
-import torchaudio
-from transformers import AutoFeatureExtractor, AutoModelForSequenceClassification, AutoConfig
+from aniemore.models import Model
 
 
 # noinspection PyUnresolvedReferences
 class VoiceRecognizer(BaseRecognizer):
-    feature_extractor: AutoFeatureExtractor = None
-    model: AutoModelForSequenceClassification = None
-    config: AutoConfig = None
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    def __init__(self, model_name: Model, device: str = 'cpu', setup_on_init: bool = True) -> None:
-        """
-        Инициализируем класс
-        :param model_name: одна из моделей из config.py
-        :param device: 'cpu' or 'cuda' or 'cuda:<number>'
-        :param setup_on_init: если True, то сразу загружаем модель и экстрактор признаков в память
-        """
-        self.MODEL_CLS, self.MODEL_URL = model_name
-        super().__init__(setup_on_init=setup_on_init, device=device)
-
-    def _setup_variables(self) -> None:
-        """
-        Загружаем модель и экстрактор признаков в память
-        :return: None
-        """
-        self.feature_extractor = AutoFeatureExtractor.from_pretrained(self.MODEL_URL)
-        try:
-            self.config = AutoConfig.from_pretrained(self.MODEL_URL)
-            self.model = self.MODEL_CLS.from_pretrained(self.MODEL_URL, config=self.config)
-        except Exception:
-            self.config = AutoConfig.from_pretrained(self.MODEL_URL, trust_remote_code=True)
-            self.model = self.MODEL_CLS.from_pretrained(
-                self.MODEL_URL, trust_remote_code=True, config=self.config
-            )
-        finally:
-            self.model = self.model.to(self.device)
-
-    @staticmethod
-    def speech_file_to_array_fn(path):
+    @classmethod
+    def speech_file_to_array_fn(cls, path):
         """
         Загружаем аудиофайл в массив
         :param path: путь к файлу
@@ -67,10 +38,10 @@ class VoiceRecognizer(BaseRecognizer):
         """
         sampling_rate = self.feature_extractor.sampling_rate
         inputs = self.feature_extractor(speech, sampling_rate=sampling_rate, return_tensors="pt", padding=True)
-        inputs = {key: inputs[key].to(self.model.device) for key in inputs}
+        inputs = {key: inputs[key].to(self._model.device) for key in inputs}
 
         with torch.no_grad():
-            logits = self.model(**inputs).logits
+            logits = self._model(**inputs).logits
 
         # move inputs to cpu back
         for key in inputs:

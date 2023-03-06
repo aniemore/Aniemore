@@ -1,40 +1,42 @@
-"""
-Test for text module
+"""Tests for text module
 """
 import pytest
-from aniemore.recognizer.text import TextRecognizer, TextEnhancer
 
+import aniemore.models
+from aniemore.recognizers.text import TextRecognizer, TextEnhancer
+
+GENERAL_TEXT_MODULE = aniemore.models.HuggingFaceModel.Text.Bert_Tiny.Bert_Tiny
 
 def test_device():
     # Should raise ValueError
     with pytest.raises(ValueError):
-        TextRecognizer(device='cuda:')
+        TextRecognizer(model=GENERAL_TEXT_MODULE, device='cuda:')
     with pytest.raises(ValueError):
-        assert TextRecognizer(device='cucu').device == 'cucu'
+        assert TextRecognizer(model=GENERAL_TEXT_MODULE, device='cucu').device == 'cucu'
     with pytest.raises(ValueError):
-        tr = TextRecognizer()
+        tr = TextRecognizer(model=GENERAL_TEXT_MODULE)
         tr.device = 'cucu'
         assert tr.device == 'cucu'
     # Should be fine
-    assert TextRecognizer(device='cpu').device == 'cpu'
-    assert TextRecognizer(device='cuda').device == 'cuda'
-    assert TextRecognizer(device='cuda:0').device == 'cuda:0'
+    assert TextRecognizer(model=GENERAL_TEXT_MODULE, device='cpu').device == 'cpu'
+    assert TextRecognizer(model=GENERAL_TEXT_MODULE, device='cuda').device == 'cuda'
+    assert TextRecognizer(model=GENERAL_TEXT_MODULE, device='cuda:0').device == 'cuda:0'
 
 
 def test_predict_one_sequence_emotion():
-    text_module = TextRecognizer()
+    text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
     emotion = text_module.predict("Какой же сегодня прекрасный день, братья", single_label=True)
     assert emotion[0] == 'happiness'
 
 
 def test_predict_one_sequence_emotions():
-    text_module = TextRecognizer()
+    text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
     emotions = text_module.predict("Какой же сегодня прекрасный день, братья", single_label=False)
     assert max(emotions[0], key=emotions[0].get) == 'happiness'
 
 
 def test_predict_many_sequence_emotion():
-    text_module = TextRecognizer()
+    text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
     text = ['Какой же сегодня прекрасный день, братья', 'Мама, я не хочу умирать...']
     emotion = text_module.predict(text, single_label=True)
     assert emotion[0] == ['Какой же сегодня прекрасный день, братья', 'happiness'] \
@@ -42,7 +44,7 @@ def test_predict_many_sequence_emotion():
 
 
 def test_predict_many_sequence_emotions():
-    text_module = TextRecognizer()
+    text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
     text = ['Какой же сегодня прекрасный день, братья', 'Мама, я не хочу умирать...']
     emotions = text_module.predict(text, single_label=False)
     assert emotions[0][0] == 'Какой же сегодня прекрасный день, братья' \
