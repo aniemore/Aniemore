@@ -3,9 +3,8 @@ Custom classes for aniemore
 """
 import torch
 import gc
-import re
 from contextlib import contextmanager
-from typing import ClassVar, ContextManager, Any, List, Union, NamedTuple, Type
+from typing import ClassVar, ContextManager, Any, List, Union, NamedTuple, Dict, Type
 
 import transformers
 from transformers import (
@@ -13,12 +12,12 @@ from transformers import (
     AutoTokenizer,
     AutoFeatureExtractor,
     BertForSequenceClassification,
-    PreTrainedModel, AutoModel,
+    PreTrainedModel
 )
 
 from aniemore.models import Model
 
-RecognizerOutputOne: Type[dict[str, float]] = dict[str, float]
+RecognizerOutputOne = Dict[str, float]
 
 
 class RecognizerOutputTuple(NamedTuple):
@@ -29,7 +28,7 @@ class RecognizerOutputTuple(NamedTuple):
     output: RecognizerOutputOne
 
 
-RecognizerOutputMany: Type[dict[str, RecognizerOutputOne]] = dict[str, RecognizerOutputOne]
+RecognizerOutputMany: Dict[str, RecognizerOutputOne]
 
 
 class BaseRecognizer:
@@ -108,13 +107,6 @@ class BaseRecognizer:
         :return: List[Any]
         """
         return [handler for handler in self.CLASS_HANDLERS if handler is not self]
-
-    # def _setup_variables(self, *args, **kwargs):
-    #     """
-    #     Устанавливаем переменные
-    #     :return: None
-    #     """
-    #     raise NotImplementedError
 
     @property
     def device(self) -> str:

@@ -1,6 +1,7 @@
 """Tests for text module
 """
 import pytest
+import torch
 
 import aniemore.models
 from aniemore.recognizers.text import TextRecognizer, TextEnhancer
@@ -8,6 +9,7 @@ from aniemore.recognizers.text import TextRecognizer, TextEnhancer
 GENERAL_TEXT_MODULE = aniemore.models.HuggingFaceModel.Text.Bert_Tiny.Bert_Tiny
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="needs a runner with CUDA Compiled")
 def test_device():
     # Should raise ValueError
     with pytest.raises(ValueError):

@@ -1,6 +1,7 @@
 """Tests for voice module
 """
 import pytest
+import torch
 from pathlib import Path
 
 import aniemore.utils.speech2text
@@ -28,6 +29,7 @@ def test_create_dummy_wav2vec2():
     assert vr.model_cls == HuggingFaceModel.Voice.Wav2Vec2.model_cls
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="needs a runner with CUDA Compiled")
 def test_device_setter():
     vr = VoiceRecognizer(model=GENERAL_WAV2VEC_MODEL)
     assert vr.device == 'cpu'
@@ -73,6 +75,7 @@ def test_single_label_on_many():
     assert type(emotions) == dict
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="needs a runner with CUDA Compiled")
 def test_context_manager():
     vr = VoiceRecognizer(model=GENERAL_WAV2VEC_MODEL)
 
@@ -85,6 +88,7 @@ def test_context_manager():
     assert type(emotion) == dict
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="needs a runner with CUDA Compiled")
 def test_one_to_many_context_manager():
     vr = VoiceRecognizer(model=HuggingFaceModel.Voice.Wav2Vec2)
 
@@ -105,6 +109,7 @@ def test_one_to_many_context_manager():
     assert type(emotion) == dict
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="needs a runner with CUDA Compiled")
 def test_many_to_many_context_manager():
     vr1 = VoiceRecognizer(model=GENERAL_WAV2VEC_MODEL, device='cpu')
     vr2 = VoiceRecognizer(model=GENERAL_WAV2VEC_MODEL, device='cpu')
