@@ -1,20 +1,15 @@
 """
 Модуль для распознавания эмоций в тексте
 """
-import gc
-import re
 import sys
-from typing import List, Union, Tuple, Any, AnyStr
+from typing import List, Union, Tuple, Any
 import torch
 import warnings
 import torch.nn.functional as F
 import numpy as np
-from transformers import BertForSequenceClassification, AutoTokenizer, BertConfig
+from transformers import  AutoTokenizer
 
-from aniemore import models
 from aniemore.utils.classes import BaseRecognizer
-
-# TODO(toiletsandpaper): revork label pick to AutoConfig
 
 
 class TextRecognizer(BaseRecognizer):

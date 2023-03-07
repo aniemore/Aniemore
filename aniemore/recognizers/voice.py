@@ -2,7 +2,6 @@ from typing import Union, List
 import numpy
 import torch
 import torchaudio
-from transformers import AutoFeatureExtractor, AutoModelForSequenceClassification, AutoConfig
 
 from aniemore.utils.classes import (
     BaseRecognizer,
@@ -10,7 +9,6 @@ from aniemore.utils.classes import (
     RecognizerOutputMany,
     RecognizerOutputTuple
 )
-from aniemore.models import Model
 
 
 # noinspection PyUnresolvedReferences

@@ -5,7 +5,7 @@ import torch
 import gc
 import re
 from contextlib import contextmanager
-from typing import ClassVar, ContextManager, Any, List, Union, TypeAlias, NamedTuple, Type
+from typing import ClassVar, ContextManager, Any, List, Union, NamedTuple, Type
 
 import transformers
 from transformers import (
@@ -18,7 +18,7 @@ from transformers import (
 
 from aniemore.models import Model
 
-RecognizerOutputOne: TypeAlias = dict[str, float]
+RecognizerOutputOne: Type[dict[str, float]] = dict[str, float]
 
 
 class RecognizerOutputTuple(NamedTuple):
@@ -29,7 +29,7 @@ class RecognizerOutputTuple(NamedTuple):
     output: RecognizerOutputOne
 
 
-RecognizerOutputMany: TypeAlias = dict[str, RecognizerOutputOne]
+RecognizerOutputMany: Type[dict[str, RecognizerOutputOne]] = dict[str, RecognizerOutputOne]
 
 
 class BaseRecognizer:
