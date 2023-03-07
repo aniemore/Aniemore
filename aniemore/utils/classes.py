@@ -135,7 +135,7 @@ class BaseRecognizer:
         """
         if value != 'cpu':
             if not self.validate_device(value):
-                raise ValueError(f"Device must be 'cpu' or 'cuda', or 'cuda:<number>', not {value}")
+                raise ValueError(f"Device must be 'cpu' or 'cuda', 'cuda:<number>' or 'mps', not {value}")
         self._device = value
 
         # set model to the given device
@@ -153,10 +153,15 @@ class BaseRecognizer:
         :param value: возможные значения: 'cpu', 'cuda', 'cuda:<number>'
         :return: True or False
         """
-        if value != 'cpu':
-            if re.match(r'^(cuda)(:\d+)?$', value) is None:  # https://regex101.com/r/SGEiYz/2
-                return False
-        return True
+        try:
+            torch.device(value)
+            return True
+        except RuntimeError:  # torch device error
+            return False
+        # if value != 'cpu':
+        #     if re.match(r'^(cuda)(:\d+)?$', value) is None:  # https://regex101.com/r/SGEiYz/2
+        #         return False
+        # return True
 
     @property
     def model(self) -> Model:
@@ -219,7 +224,6 @@ class BaseRecognizer:
 
             # switch this example to the given device
             self._model = self._model.to(device)
-            #self.device = device
 
             # clear cuda cache
             if clear_same_device_cache and torch.cuda.is_available():

@@ -77,7 +77,7 @@ def test_context_manager():
 
     with vr.on_device('cuda:0'):
         # check device
-        assert str(vr.device) == 'cuda:0'
+        assert str(vr._model.device) == 'cuda:0'
         emotion = vr.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
@@ -89,7 +89,7 @@ def test_one_to_many_context_manager():
 
     with vr.on_device('cuda:0'):
         # check device
-        assert str(vr.device) == 'cuda:0'
+        assert str(vr._model.device) == 'cuda:0'
         emotion = vr.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
@@ -97,7 +97,7 @@ def test_one_to_many_context_manager():
 
     with vr.on_device('cuda:0'):
         # check device
-        assert str(vr.device) == 'cuda:0'
+        assert str(vr._model.device) == 'cuda:0'
         emotion = vr.predict(TEST_VOICE_DATA_PATH)
 
     # check return type
@@ -111,9 +111,9 @@ def test_many_to_many_context_manager():
 
     with vr1.on_device('cuda:0'):
         # check devices of models in handlers
-        assert str(vr1.device) == 'cuda:0'
-        assert str(vr2.device) == 'cpu'
-        assert str(vr3.device) == 'cpu'
+        assert str(vr1._model.device) == 'cuda:0'
+        assert str(vr2._model.device) == 'cpu'
+        assert str(vr3._model.device) == 'cpu'
 
         emotion = vr1.predict(TEST_VOICE_DATA_PATH)
 
@@ -122,9 +122,9 @@ def test_many_to_many_context_manager():
 
     with vr2.on_device('cuda:0'):
         # check devices of models in handlers
-        assert str(vr1.device) == 'cpu'
-        assert str(vr2.device) == 'cuda:0'
-        assert str(vr3.device) == 'cpu'
+        assert str(vr1._model.device) == 'cpu'
+        assert str(vr2._model.device) == 'cuda:0'
+        assert str(vr3._model.device) == 'cpu'
 
         emotion = vr2.predict(TEST_VOICE_DATA_PATH)
 
@@ -133,9 +133,9 @@ def test_many_to_many_context_manager():
 
     with vr3.on_device('cuda:0'):
         # check devices of models in handlers
-        assert str(vr1.device) == 'cpu'
-        assert str(vr2.device) == 'cpu'
-        assert str(vr3.device) == 'cuda:0'
+        assert str(vr1._model.device) == 'cpu'
+        assert str(vr2._model.device) == 'cpu'
+        assert str(vr3._model.device) == 'cuda:0'
 
         emotion = vr3.predict(TEST_VOICE_DATA_PATH)
 
@@ -145,7 +145,6 @@ def test_many_to_many_context_manager():
 
 def test_load_speech_to_text():
     s2t_model = SmallSpeech2Text()
-
     assert s2t_model(TEST_VOICE_DATA_PATH).language == 'ru'
 
 
