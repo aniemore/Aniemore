@@ -7,6 +7,7 @@ from aniemore.recognizers.text import TextRecognizer, TextEnhancer
 
 GENERAL_TEXT_MODULE = aniemore.models.HuggingFaceModel.Text.Bert_Tiny.Bert_Tiny
 
+
 def test_device():
     # Should raise ValueError
     with pytest.raises(ValueError):

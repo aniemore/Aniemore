@@ -14,6 +14,7 @@ TEST_VOICE_DATA_PATH = str(TESTS_DIR / 'src' / 'my_voice.ogg')
 
 GENERAL_WAV2VEC_MODEL = HuggingFaceModel.Voice.Wav2Vec2
 
+
 def test_create_empty():
     with pytest.raises(AttributeError):
         VoiceRecognizer()

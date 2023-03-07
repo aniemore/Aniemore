@@ -47,7 +47,7 @@ class BaseRecognizer:
         :param args: аргументы для инициализации класса
         :param kwargs: аргументы для инициализации класса
 
-        >>> from aniemore.config import HuggingFaceModel
+        >>> from aniemore.models import HuggingFaceModel
         >>> pass
         """
         self._model: Any = None
