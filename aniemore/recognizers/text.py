@@ -45,8 +45,12 @@ class TextRecognizer(BaseRecognizer):
         :type truncation: bool
         :return: torch.Tensor
         """
-        inputs = tokenizer(text, max_length=max_length, padding=padding,
-                                truncation=truncation, return_tensors='pt').to(device)
+        inputs = tokenizer(
+            text,
+            max_length=max_length,
+            padding=padding,
+            truncation=truncation,
+            return_tensors='pt').to(device)
         with torch.no_grad():
             logits = self._model.to(self.device)(**inputs).logits
         scores = F.softmax(logits, dim=1)
@@ -84,7 +88,7 @@ class TextRecognizer(BaseRecognizer):
         return tuple(outputs)
 
     def _predict_many(self, texts: List[str], single_label: bool) -> \
-            tuple[list[str | Any] | list[str | dict], ...]:
+            Union[tuple[list[str], list[Union[str, dict]], ...]]:
         """
         [PRIVATE METHOD] Он принимает список текстов и возвращает список прогнозов.
 
