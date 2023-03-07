@@ -17,7 +17,7 @@ from transformers import (
 
 from aniemore.models import Model
 
-RecognizerOutputOne = Dict[str, float]
+RecognizerOutputOne: Type[Dict[str, float]] = dict
 
 
 class RecognizerOutputTuple(NamedTuple):
@@ -28,7 +28,7 @@ class RecognizerOutputTuple(NamedTuple):
     output: RecognizerOutputOne
 
 
-RecognizerOutputMany = Dict[str, RecognizerOutputOne]
+RecognizerOutputMany: Type[Dict[str, RecognizerOutputOne]] = dict
 
 
 class BaseRecognizer:
@@ -75,7 +75,7 @@ class BaseRecognizer:
         try:
             self.config = AutoConfig.from_pretrained(self.model_url)
             self._model = self.model_cls.from_pretrained(self.model_url, config=self.config)
-        except Exception as exc: # TODO: needs more precise exception work
+        except Exception as exc:  # TODO: needs more precise exception work
             self.config = AutoConfig.from_pretrained(self.model_url, trust_remote_code=True)
             self._model = self.model_cls.from_pretrained(
                 self.model_url, trust_remote_code=True, config=self.config

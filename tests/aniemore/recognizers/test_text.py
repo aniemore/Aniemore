@@ -28,32 +28,32 @@ def test_device():
 
 def test_predict_one_sequence_emotion():
     text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
-    emotion = text_module.predict("Какой же сегодня прекрасный день, братья", single_label=True)
-    assert emotion[0] == 'happiness'
+    emotion = text_module.predict("Какой же сегодня прекрасный день, братья", return_single_label=True)
+    assert emotion == 'happiness'
 
 
 def test_predict_one_sequence_emotions():
     text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
-    emotions = text_module.predict("Какой же сегодня прекрасный день, братья", single_label=False)
-    assert max(emotions[0], key=emotions[0].get) == 'happiness'
+    emotions = text_module.predict("Какой же сегодня прекрасный день, братья", return_single_label=False)
+    assert max(emotions, key=emotions.get) == 'happiness'
 
 
 def test_predict_many_sequence_emotion():
     text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
     text = ['Какой же сегодня прекрасный день, братья', 'Мама, я не хочу умирать...']
-    emotion = text_module.predict(text, single_label=True)
-    assert emotion[0] == ['Какой же сегодня прекрасный день, братья', 'happiness'] \
-           and emotion[1] == ['Мама, я не хочу умирать...', 'sadness']
+    o_emotions = ['happiness', 'sadness']
+    emotions = text_module.predict(text, return_single_label=True)
+    for original, (text_, emotion) in zip(text, emotions.items()):
+        assert original == text_ and emotion == o_emotions.pop(0)
 
 
 def test_predict_many_sequence_emotions():
     text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
     text = ['Какой же сегодня прекрасный день, братья', 'Мама, я не хочу умирать...']
-    emotions = text_module.predict(text, single_label=False)
-    assert emotions[0][0] == 'Какой же сегодня прекрасный день, братья' \
-           and max(emotions[0][1], key=emotions[0][1].get) == 'happiness' \
-           and emotions[1][0] == 'Мама, я не хочу умирать...' \
-           and max(emotions[1][1], key=emotions[1][1].get) == 'sadness'
+    o_emotions = ['happiness', 'sadness']
+    emotions = text_module.predict(text, return_single_label=False)
+    for original, (text_, emotion) in zip(text, emotions.items()):
+        assert original == text_ and max(emotion, key=emotion.get) == o_emotions.pop(0)
 
 
 def test_text_enhancement():

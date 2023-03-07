@@ -2,14 +2,18 @@
 Модуль для распознавания эмоций в тексте
 """
 import sys
-from typing import List, Union, Tuple, Any
+from typing import List, Union
 import torch
 import warnings
 import torch.nn.functional as F
-import numpy as np
-from transformers import  AutoTokenizer
+from transformers import AutoTokenizer
 
-from aniemore.utils.classes import BaseRecognizer
+from aniemore.utils.classes import (
+    BaseRecognizer,
+    RecognizerOutputMany,
+    RecognizerOutputOne,
+    RecognizerOutputTuple
+)
 
 
 class TextRecognizer(BaseRecognizer):
@@ -56,80 +60,64 @@ class TextRecognizer(BaseRecognizer):
         scores = F.softmax(logits, dim=1)
         return scores
 
-    # def _setup_variables(self) -> None:
-    #     """
-    #     [PRIVATE METHOD] Загружаем модель и токенайзер в память
-    #
-    #     :return: None
-    #     """
-    #     self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_URL)
-    #     self.model = BertForSequenceClassification.from_pretrained(self.MODEL_URL)
-    #     self.model_config = BertConfig.from_pretrained(self.MODEL_URL)
-
-    def _predict_one(self, text: str, single_label: bool) -> Union[Tuple[dict], Tuple[str]]:
+    def _predict_one(self, text: str) -> RecognizerOutputOne:
         """
-        [PRIVATE METHOD] Получаем строку текста, токенизируем, отправляем в модель и возвращаем лист "эмоция : вероятность"
+        [PROTECTED METHOD] Получаем строку текста, токенизируем, отправляем в модель и возвращаем "
 
         :param text: текст для анализа
         :type text: str
-        :return: список "эмоция : вероятность"
+        :return:
         """
 
         scores = self._get_torch_scores(text, self.tokenizer, self.device)
 
-        if single_label:
-            max_score = torch.argmax(scores, dim=1).numpy()
-            outputs = [self.config.id2label[max_score[0]]]
+        scores = {k: v for k, v in zip(self.config.id2label.values(), scores[0].tolist())}
 
-        else:
-            scores = scores[0]
-            outputs = [{self.config.id2label[i]: v for i, v in enumerate(scores)}]
+        return RecognizerOutputOne(**scores)
 
-        return tuple(outputs)
-
-    def _predict_many(self, texts: List[str], single_label: bool) -> \
-            Union[tuple[list[str], list[Union[str, dict]], ...]]:
+    def _predict_many(self, texts: List[str]) -> RecognizerOutputMany:
         """
-        [PRIVATE METHOD] Он принимает список текстов и возвращает список прогнозов.
+        [PROTECTED METHOD] Он принимает список текстов и возвращает список прогнозов.
 
         :param texts: Список[стр]
         :type texts: List[str]
-        :param single_label: Если True, функция вернет список строк. Если False, он вернет список словарей
+        :returns
         """
         scores = self._get_torch_scores(texts, self.tokenizer, self.device).detach().cpu().numpy()
-        outputs = []
 
-        for _text, _local_score in zip(texts, scores):
-            if single_label:
-                max_score: Union[str, Any] = np.argmax(_local_score)
-                outputs.append(
-                    [_text, self.config.id2label[max_score]]
-                )
-            else:
-                outputs.append(
-                    [_text, {self.config.id2label[i]: v for i, v in enumerate(_local_score)}]
-                )
-        print(single_label, outputs, type(outputs))
-        return tuple(outputs)
+        result = []
 
-    def predict(self, text: Union[List[str], str], single_label=False) -> Any:
+        for path_, score in zip(texts, scores):
+            score = {k: v for k, v in zip(self.config.id2label.values(), score.tolist())}
+            result.append(RecognizerOutputTuple(path_, RecognizerOutputOne(**score)))
+
+        return RecognizerOutputMany(tuple(result))
+
+    def predict(self, text: Union[List[str], str], return_single_label=False) -> \
+            Union[RecognizerOutputOne, RecognizerOutputMany]:
         """
         Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
         словарей
 
-        :param single_label: Вернуть наиболее вероятный класс или список классов с вероятностями
+        :param return_single_label: Вернуть наиболее вероятный класс или список классов с вероятностями
         :param text: Путь к изображению, которое вы хотите предсказать
         :type text: List[str] or str
         """
         if self._model is None:
             self._setup_variables()
 
-        if type(text) == str:
-            return self._predict_one(text, single_label=single_label)
-        elif type(text) == list:
-            return self._predict_many(text, single_label=single_label)
+        if isinstance(text, str):
+            if return_single_label:
+                return self._get_single_label(self._predict_one(text))
+
+            return self._predict_one(text)
+        elif isinstance(text, list):
+            if return_single_label:
+                return self._get_single_label(self._predict_many(text))
+
+            return self._predict_many(text)
         else:
-            raise ValueError("You need to input list[text] or one text of your file for prediction")
+            raise ValueError('paths must be str or list')
 
 
 class TextEnhancer:
