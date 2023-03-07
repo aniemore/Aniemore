@@ -48,6 +48,9 @@ sox = [
 ]
 ffmpeg-python = "^0.2.0"
 typing-extensions = "^4.5.0"
+wheel = "^0.38.4"
+setuptools = "^67.5.1"
+pip = "^23.0.1"
 
 [[tool.poetry.source]]
 name = "pytorch"
