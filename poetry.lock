@@ -1241,25 +1241,6 @@ docs = ["numpydoc", "sphinx (==1.2.3)", "sphinx-rtd-theme", "sphinxcontrib-napol
 tests = ["pysoundfile (>=0.9.0)", "pytest", "pytest-cov", "pytest-pep8"]
 
 [[package]]
-name = "static-ffmpeg"
-version = "2.5"
-description = "Cross platform ffmpeg to work on various systems."
-category = "main"
-optional = false
-python-versions = ">=3.6.0"
-files = [
-    {file = "static_ffmpeg-2.5-py2.py3-none-any.whl", hash = "sha256:046623c105731390746c6f24931d22e1789f7267a0dea4e42206d02f8bf42565"},
-    {file = "static_ffmpeg-2.5.tar.gz", hash = "sha256:77101e2b7afea6930177987d80e84144779ef326e77e7d3e0e89cf4b7e94a91b"},
-]
-
-[package.dependencies]
-filelock = "*"
-requests = "*"
-
-[package.extras]
-test = ["pytest"]
-
-[[package]]
 name = "tokenizers"
 version = "0.13.2"
 description = "Fast and Customizable Tokenizers"
@@ -1698,4 +1679,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "c1301c78110c4f49364140e9d7b2884df43bb60eed6c1193703c808cb34d9164"
+content-hash = "aad040108b6d68c8638e102d109865ca6f1d77a7e67eda3757ca369d5b8601c3"

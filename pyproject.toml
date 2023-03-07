@@ -46,8 +46,8 @@ sox = [
     {version = "^1.4.1", platform =  "linux" },
     {version = "^1.4.1", platform =  "darwin" }
 ]
-static-ffmpeg = "^2.5"
 ffmpeg-python = "^0.2.0"
+typing-extensions = "^4.5.0"
 
 [[tool.poetry.source]]
 name = "pytorch"
