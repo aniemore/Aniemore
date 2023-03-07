@@ -6,7 +6,7 @@ from pathlib import Path
 
 import aniemore.utils.speech2text
 from aniemore.recognizers.voice import VoiceRecognizer
-from aniemore.utils.speech2text import SmallSpeech2Text, Speech2TextOutput
+from aniemore.utils.speech2text import SmallSpeech2Text
 from aniemore.models import HuggingFaceModel
 
 

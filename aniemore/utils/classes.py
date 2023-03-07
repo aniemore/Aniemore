@@ -28,7 +28,7 @@ class RecognizerOutputTuple(NamedTuple):
     output: RecognizerOutputOne
 
 
-RecognizerOutputMany: Dict[str, RecognizerOutputOne]
+RecognizerOutputMany = Dict[str, RecognizerOutputOne]
 
 
 class BaseRecognizer:
