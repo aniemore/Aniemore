@@ -4,12 +4,17 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "aniemore"
-version = "1.0.1"
+version = "1.0.2"
 authors = [
     "Ilya Lubenets <lii291001@gmail.com>",
     "Nikita Davidchuk <ar4ikov228@gmail.com>",
     "Artem Amentes <artem@socialcode.ru>",
 ]
+maintainers = [
+    "Ilya Lubenets <lii291001@gmail.com>",
+    "Nikita Davidchuk <ar4ikov228@gmail.com>",
+]
+license = "MIT"
 description = "Aniemore (Artem Nikita Ilya EMOtion REcognition) is a library for emotion recognition in voice and text for russian language."
 readme = "README.md"
 classifiers = [
@@ -29,7 +34,7 @@ classifiers = [
 ]
 
 [tool.poetry.urls]
-"Homepage" = "https://github.com/aniemore/Aniemore"
+"Repository" = "https://github.com/aniemore/Aniemore"
 "Bug Tracker" = "https://github.com/aniemore/Aniemore/issues"
 "Hugging Face Homepage" = "https://huggingface.co/Aniemore"
 

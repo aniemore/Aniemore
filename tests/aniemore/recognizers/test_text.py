@@ -9,6 +9,17 @@ from aniemore.recognizers.text import TextRecognizer, TextEnhancer
 GENERAL_TEXT_MODULE = aniemore.models.HuggingFaceModel.Text.Bert_Tiny.Bert_Tiny
 
 
+@pytest.fixture(autouse=True)
+def run_around_test():
+    # would be run before test
+    yield  # exact test happens
+    # would be run after test
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    import gc
+    gc.collect()
+
+
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="needs a runner with CUDA Compiled")
 def test_device():
     # Should raise ValueError
