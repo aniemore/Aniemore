@@ -60,7 +60,7 @@ class TextRecognizer(BaseRecognizer):
         scores = F.softmax(logits, dim=1)
         return scores
 
-    def _predict_one(self, text: str) -> RecognizerOutputOne:
+    def _recognize_one(self, text: str) -> RecognizerOutputOne:
         """
         [PROTECTED METHOD] Получаем строку текста, токенизируем, отправляем в модель и возвращаем "
 
@@ -75,7 +75,7 @@ class TextRecognizer(BaseRecognizer):
 
         return RecognizerOutputOne(**scores)
 
-    def _predict_many(self, texts: List[str]) -> RecognizerOutputMany:
+    def _recognize_many(self, texts: List[str]) -> RecognizerOutputMany:
         """
         [PROTECTED METHOD] Он принимает список текстов и возвращает список прогнозов.
 
@@ -93,7 +93,7 @@ class TextRecognizer(BaseRecognizer):
 
         return RecognizerOutputMany(tuple(result))
 
-    def predict(self, text: Union[List[str], str], return_single_label=False) -> \
+    def recognize(self, text: Union[List[str], str], return_single_label=False) -> \
             Union[RecognizerOutputOne, RecognizerOutputMany]:
         """
         Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
@@ -108,14 +108,14 @@ class TextRecognizer(BaseRecognizer):
 
         if isinstance(text, str):
             if return_single_label:
-                return self._get_single_label(self._predict_one(text))
+                return self._get_single_label(self._recognize_one(text))
 
-            return self._predict_one(text)
+            return self._recognize_one(text)
         elif isinstance(text, list):
             if return_single_label:
-                return self._get_single_label(self._predict_many(text))
+                return self._get_single_label(self._recognize_many(text))
 
-            return self._predict_many(text)
+            return self._recognize_many(text)
         else:
             raise ValueError('paths must be str or list')
 

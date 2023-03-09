@@ -47,7 +47,9 @@ class BaseRecognizer:
         :param kwargs: аргументы для инициализации класса
 
         >>> from aniemore.models import HuggingFaceModel
-        >>> pass
+        >>> from aniemore.recognizers.text import TextRecognizer
+        >>> tr = TextRecognizer(HuggingFaceModel.Text.Bert_Tiny, device='cuda:0')
+        >>> tr.recognize('Как же я люблю природу, она прекрасна!!)))')
         """
         self._model: Any = None
         self.config: AutoConfig = None
@@ -280,7 +282,7 @@ class BaseRecognizer:
         """
         raise NotImplementedError
 
-    def predict(self, *args, **kwargs) -> Union[RecognizerOutputOne, RecognizerOutputMany]:
+    def recognize(self, *args, **kwargs) -> Union[RecognizerOutputOne, RecognizerOutputMany]:
         """
         Получаем предсказания модели
 
@@ -290,7 +292,7 @@ class BaseRecognizer:
         """
         raise NotImplementedError
 
-    def _predict_one(self, *args, **kwargs) -> RecognizerOutputOne:
+    def _recognize_one(self, *args, **kwargs) -> RecognizerOutputOne:
         """
         Получаем предсказания модели для одного объекта
 
@@ -300,7 +302,7 @@ class BaseRecognizer:
         """
         raise NotImplementedError
 
-    def _predict_many(self, *args, **kwargs) -> RecognizerOutputMany:
+    def _recognize_many(self, *args, **kwargs) -> RecognizerOutputMany:
         """
         Получаем предсказания модели для нескольких объектов
 

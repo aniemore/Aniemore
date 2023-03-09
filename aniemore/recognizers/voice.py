@@ -50,7 +50,7 @@ class VoiceRecognizer(BaseRecognizer):
         scores = torch.softmax(logits, dim=1)
         return scores
 
-    def _predict_one(self, path: str) -> RecognizerOutputOne:
+    def _recognize_one(self, path: str) -> RecognizerOutputOne:
         """
         Исполнение рантайма для одного файла
         :param path: путь к файлу
@@ -63,7 +63,7 @@ class VoiceRecognizer(BaseRecognizer):
 
         return RecognizerOutputOne(**scores)
 
-    def _predict_many(self, paths: List[str]) -> RecognizerOutputMany:
+    def _recognize_many(self, paths: List[str]) -> RecognizerOutputMany:
         """
         Прогнозируем несколько файлов
         :param paths: список путей к файлам
@@ -87,7 +87,7 @@ class VoiceRecognizer(BaseRecognizer):
 
     # TODO: add single_label option
 
-    def predict(self, paths: Union[List[str], str], return_single_label: bool = False) -> \
+    def recognize(self, paths: Union[List[str], str], return_single_label: bool = False) -> \
             Union[RecognizerOutputOne, RecognizerOutputMany]:
         """
         Прогнозируем файлы
@@ -97,13 +97,13 @@ class VoiceRecognizer(BaseRecognizer):
         """
         if isinstance(paths, str):
             if return_single_label:
-                return self._get_single_label(self._predict_one(paths))
+                return self._get_single_label(self._recognize_one(paths))
 
-            return self._predict_one(paths)
+            return self._recognize_one(paths)
         elif isinstance(paths, list):
             if return_single_label:
-                return self._get_single_label(self._predict_many(paths))
+                return self._get_single_label(self._recognize_many(paths))
 
-            return self._predict_many(paths)
+            return self._recognize_many(paths)
         else:
             raise ValueError('paths must be str or list')
