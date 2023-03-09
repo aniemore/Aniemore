@@ -30,7 +30,7 @@ class HuggingFaceModel:
         UniSpeech = Model(UniSpeechSatForSequenceClassification, 'aniemore/unispeech-emotion-russian-resd')
 
     class Text(Model, Enum):
-        Bert_Tiny = Model(BertForSequenceClassification, 'aniemore/rubert-tiny-emotion-russian-cedr-m7')
-        Bert_Tiny2 = Model(BertForSequenceClassification, 'aniemore/rubert-tiny-emotion-russian-cedr-m7-2')
+        Bert_Tiny = Model(BertForSequenceClassification, 'aniemore/rubert-tiny2-russian-emotion-detection')
+        Bert_Tiny2 = Model(BertForSequenceClassification, 'aniemore/rubert-tiny-emotion-russian-cedr-m7')
         Bert_Base = Model(BertForSequenceClassification, 'aniemore/rubert-base-emotion-russian-cedr-m7')
         Bert_Large = Model(BertForSequenceClassification, 'aniemore/rubert-large-emotion-russian-cedr-m7')
