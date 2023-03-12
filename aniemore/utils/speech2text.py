@@ -4,9 +4,8 @@ from functools import partial
 
 
 class SpeechSegment(NamedTuple):
-    """
-    Структура для хранения результатов распознавания
-
+    """Структура для хранения результатов распознавания
+    
     id: локальный номер сегмента
     seek: смещение в секундах от начала аудио
     start: время начала сегмента в секундах
@@ -17,6 +16,11 @@ class SpeechSegment(NamedTuple):
     avg_logprob: средняя вероятность
     no_speech_prob: вероятность отсутствия речи
     compression_ratio: коэффициент сжатия
+
+    Args:
+
+    Returns:
+
     """
     id: int
     seek: int
@@ -31,12 +35,16 @@ class SpeechSegment(NamedTuple):
 
 
 class Speech2TextOutput(NamedTuple):
-    """
-    Структура для хранения результатов распознавания
-
+    """Структура для хранения результатов распознавания
+    
     text: распознанный текст
     language: язык
     segments: список сегментов
+
+    Args:
+
+    Returns:
+
     """
     text: str
     language: str
@@ -45,11 +53,15 @@ class Speech2TextOutput(NamedTuple):
 
 class Speech2Text:
     def __init__(self, model_path: str):
-        """
-        Инициализация модели распознавания речи
-
+    """Инициализация модели распознавания речи
+    
         model_path: путь к модели
-        """
+
+    Args:
+
+    Returns:
+
+    """
         self.model = whisper.load_model(model_path)
 
     def __call__(self, audio_path: str) -> Speech2TextOutput:
@@ -66,12 +78,15 @@ class Speech2Text:
         return self.recognize(audio_path)
 
     def recognize(self, audio_path: str) -> Speech2TextOutput:
-        """
-        Распознать аудио
-
+        """Распознать аудио
+        
         audio_path: путь к аудио
 
-        return: результат распознавания
+        Args:
+          audio_path: str: 
+
+        Returns:
+          
 
         >>> speech2text = Speech2Text('base')
         >>> speech2text.recognize('audio.wav')
