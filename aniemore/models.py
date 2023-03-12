@@ -1,3 +1,5 @@
+"""Здесь хранятся все модели, используемые в проекте
+"""
 import dataclasses
 from enum import Enum
 from typing import NamedTuple, Type

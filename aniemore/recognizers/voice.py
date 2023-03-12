@@ -13,6 +13,9 @@ from aniemore.utils.classes import (
 
 # noinspection PyUnresolvedReferences
 class VoiceRecognizer(BaseRecognizer):
+    """
+    Класс для распознования эмоций в тексте
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -69,21 +72,13 @@ class VoiceRecognizer(BaseRecognizer):
         :param paths: список путей к файлам
         :return: словарь с выходами модели
         """
-
         speeches = []
         for path in paths:
             speech = self.speech_file_to_array_fn(path)
             speeches.append(speech)
-
-        scores = self._get_torch_scores(speeches)
-
-        result = []
-
-        for path_, score in zip(paths, scores):
-            score = {k: v for k, v in zip(self.config.id2label.values(), score.tolist())}
-            result.append(RecognizerOutputTuple(path_, RecognizerOutputOne(**score)))
-
-        return RecognizerOutputMany(tuple(result))
+        scores: torch.Tensor = self._get_torch_scores(speeches)
+        results: RecognizerOutputMany = self._get_many_results(paths, scores)
+        return results
 
     # TODO: add single_label option
 
@@ -95,15 +90,18 @@ class VoiceRecognizer(BaseRecognizer):
         :param return_single_label: если True, то возвращаем только один лейбл
         :return: выход модели
         """
+        if self._model is None:
+            self._setup_variables()
+
         if isinstance(paths, str):
             if return_single_label:
                 return self._get_single_label(self._recognize_one(paths))
-
             return self._recognize_one(paths)
+
         elif isinstance(paths, list):
             if return_single_label:
                 return self._get_single_label(self._recognize_many(paths))
-
             return self._recognize_many(paths)
+
         else:
             raise ValueError('paths must be str or list')

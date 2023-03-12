@@ -34,7 +34,8 @@ class TextRecognizer(BaseRecognizer):
             padding: bool = True,
             truncation: bool = True) -> torch.Tensor:
         """
-        [PRIVATE METHOD] Получаем лист текстов, токенизируем, отправляем в модель и возвращаем тензор с вероятностями
+        [PROTECTED METHOD] Получаем лист текстов, токенизируем, отправляем в модель и возвращаем тензор с вероятностями
+
         :param text: текст для анализа
         :type text: str
         :param tokenizer: токенайзер
@@ -77,21 +78,15 @@ class TextRecognizer(BaseRecognizer):
 
     def _recognize_many(self, texts: List[str]) -> RecognizerOutputMany:
         """
-        [PROTECTED METHOD] Он принимает список текстов и возвращает список прогнозов.
+        [PROTECTED METHOD] Принимает список текстов и возвращает список прогнозов.
 
         :param texts: Список[стр]
         :type texts: List[str]
         :returns
         """
         scores = self._get_torch_scores(texts, self.tokenizer, self.device).detach().cpu().numpy()
-
-        result = []
-
-        for path_, score in zip(texts, scores):
-            score = {k: v for k, v in zip(self.config.id2label.values(), score.tolist())}
-            result.append(RecognizerOutputTuple(path_, RecognizerOutputOne(**score)))
-
-        return RecognizerOutputMany(tuple(result))
+        results: RecognizerOutputMany = self._get_many_results(texts, scores)
+        return results
 
     def recognize(self, text: Union[List[str], str], return_single_label=False) -> \
             Union[RecognizerOutputOne, RecognizerOutputMany]:
@@ -123,6 +118,9 @@ class TextRecognizer(BaseRecognizer):
 class TextEnhancer:
     """
     Класс для улучшения текста, например, для исправления грамматических ошибок и т.д.
+
+    >>> te = TextEnhancer()
+    >>> te.enhance('привет как дела')
     """
     _grammar_model = None
     _apply_te = None
@@ -133,9 +131,9 @@ class TextEnhancer:
         :param setup_on_init: Если True, модель будет загружена при инициализации класса
         """
         if setup_on_init:
-            self.load_model()
+            self._load_model()
 
-    def load_model(self) -> None:
+    def _load_model(self) -> None:
         """
         Загрузка модели. Если она уже загружена, то ничего не произойдет
         :return: None

@@ -52,8 +52,8 @@ class BaseRecognizer:
         >>> tr.recognize('Как же я люблю природу, она прекрасна!!)))')
         """
         self._model: Any = None
-        self.config: AutoConfig = None
         self._device: str = None
+        self.config: AutoConfig = None
         self.model_cls: Type[PreTrainedModel] = None
         self.model_url: str = None
 
@@ -241,8 +241,11 @@ class BaseRecognizer:
                 gc.collect()
 
     @contextmanager
-    def with_model(self, model: Model, device: Union[str, torch.device],
-                   clear_cache_after: bool = True) -> ContextManager:
+    def with_model(
+            self,
+            model: Model,
+            device: Union[str, torch.device],
+            clear_cache_after: bool = True) -> ContextManager:
         """
         Context manager that allows you to switch the model to the given model
 
@@ -311,6 +314,20 @@ class BaseRecognizer:
         :return: предсказания модели
         """
         raise NotImplementedError
+
+    def _get_many_results(self, items: List[str], scores: torch.Tensor) -> RecognizerOutputMany:
+        """
+        [PROTECTED METHOD] Принимает на вход исследуемые объекты и результат от модели,
+        и возвращает результат
+        :param items: список исследуемых объектов
+        :param scores: выход от функции _get_torch_scores
+        :return: `dict` с результатами по каждому объекту
+        """
+        result = []
+        for path_, score in zip(items, scores):
+            score = {k: v for k, v in zip(self.config.id2label.values(), score.tolist())}
+            result.append(RecognizerOutputTuple(path_, RecognizerOutputOne(**score)))
+        return RecognizerOutputMany(tuple(result))
 
     @classmethod
     def _get_single_label(cls, output: Union[RecognizerOutputOne, RecognizerOutputMany]) -> \
