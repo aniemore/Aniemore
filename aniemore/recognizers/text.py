@@ -17,11 +17,6 @@ from aniemore.utils.classes import (
 
 
 class TextRecognizer(BaseRecognizer):
-    """
-    Используем уже обученную (на модифированном CEDR датасете) rubert-tiny2 модель.
-    Список эмоций и их ID в модели можете посмотроеть в config.yml
-    """
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -33,21 +28,19 @@ class TextRecognizer(BaseRecognizer):
             max_length: int = 512,
             padding: bool = True,
             truncation: bool = True) -> torch.Tensor:
-        """
-        [PRIVATE METHOD] Получаем лист текстов, токенизируем, отправляем в модель и возвращаем тензор с вероятностями
-        :param text: текст для анализа
-        :type text: str
-        :param tokenizer: токенайзер
-        :type tokenizer: AutoTokenizer
-        :param device: 'cpu' or 'cuda' or 'cuda:<number>'
-        :type device: str
-        :param max_length: максимальная длина текста (default=512)
-        :type max_length: int
-        :param padding: если True, то добавляем паддинги (default=True)
-        :type padding: bool
-        :param truncation: если True, то обрезаем текст (default=True)
-        :type truncation: bool
-        :return: torch.Tensor
+        """[PROTECTED METHOD] Получаем лист текстов, токенизируем, отправляем в модель и возвращаем тензор с вероятностями
+
+        Args:
+          text: текст для анализа
+          tokenizer: токенайзер
+          device: cpu' or 'cuda' or 'cuda:<number>'
+          max_length: максимальная длина текста (default=512)
+          padding: если True, то добавляем паддинги (default=True)
+          truncation: если True, то обрезаем текст (default=True)
+
+        Returns:
+          torch.Tensor
+
         """
         inputs = tokenizer(
             text,
@@ -60,13 +53,15 @@ class TextRecognizer(BaseRecognizer):
         scores = F.softmax(logits, dim=1)
         return scores
 
-    def _predict_one(self, text: str) -> RecognizerOutputOne:
-        """
-        [PROTECTED METHOD] Получаем строку текста, токенизируем, отправляем в модель и возвращаем "
+    def _recognize_one(self, text: str) -> RecognizerOutputOne:
+        """[PROTECTED METHOD] Получаем строку текста, токенизируем, отправляем в модель и возвращаем "
 
-        :param text: текст для анализа
-        :type text: str
-        :return:
+        Args:
+          text(str): текст для анализа
+          text: str: 
+
+        Returns:
+            результат распознования
         """
 
         scores = self._get_torch_scores(text, self.tokenizer, self.device)
@@ -75,55 +70,41 @@ class TextRecognizer(BaseRecognizer):
 
         return RecognizerOutputOne(**scores)
 
-    def _predict_many(self, texts: List[str]) -> RecognizerOutputMany:
-        """
-        [PROTECTED METHOD] Он принимает список текстов и возвращает список прогнозов.
+    def _recognize_many(self, texts: List[str]) -> RecognizerOutputMany:
+        """[PROTECTED METHOD] Принимает список текстов и возвращает список прогнозов.
 
-        :param texts: Список[стр]
-        :type texts: List[str]
-        :returns
+        Args:
+          texts: список текстов для анализа
+
+        Returns:
+            результат распознования
         """
         scores = self._get_torch_scores(texts, self.tokenizer, self.device).detach().cpu().numpy()
+        results: RecognizerOutputMany = self._get_many_results(texts, scores)
+        return results
 
-        result = []
-
-        for path_, score in zip(texts, scores):
-            score = {k: v for k, v in zip(self.config.id2label.values(), score.tolist())}
-            result.append(RecognizerOutputTuple(path_, RecognizerOutputOne(**score)))
-
-        return RecognizerOutputMany(tuple(result))
-
-    def predict(self, text: Union[List[str], str], return_single_label=False) -> \
+    def recognize(self, text: Union[List[str], str], return_single_label=False) -> \
             Union[RecognizerOutputOne, RecognizerOutputMany]:
-        """
-        Эта функция принимает путь к файлу или список путей к файлам и возвращает список словарей или список списков
-        словарей
 
-        :param return_single_label: Вернуть наиболее вероятный класс или список классов с вероятностями
-        :param text: Путь к изображению, которое вы хотите предсказать
-        :type text: List[str] or str
-        """
         if self._model is None:
             self._setup_variables()
 
         if isinstance(text, str):
             if return_single_label:
-                return self._get_single_label(self._predict_one(text))
+                return self._get_single_label(self._recognize_one(text))
 
-            return self._predict_one(text)
+            return self._recognize_one(text)
         elif isinstance(text, list):
             if return_single_label:
-                return self._get_single_label(self._predict_many(text))
+                return self._get_single_label(self._recognize_many(text))
 
-            return self._predict_many(text)
+            return self._recognize_many(text)
         else:
             raise ValueError('paths must be str or list')
 
 
 class TextEnhancer:
-    """
-    Класс для улучшения текста, например, для исправления грамматических ошибок и т.д.
-    """
+    """Класс для улучшения текста, например, для исправления грамматических ошибок и т.д."""
     _grammar_model = None
     _apply_te = None
 
@@ -133,12 +114,16 @@ class TextEnhancer:
         :param setup_on_init: Если True, модель будет загружена при инициализации класса
         """
         if setup_on_init:
-            self.load_model()
+            self._load_model()
 
-    def load_model(self) -> None:
-        """
-        Загрузка модели. Если она уже загружена, то ничего не произойдет
+    def _load_model(self) -> None:
+        """Загрузка модели. Если она уже загружена, то ничего не произойдет
         :return: None
+
+        Args:
+
+        Returns:
+
         """
         if sys.platform == 'darwin':  # MacOS check
             warning_text = ("Silero models are not supported on MacOS. "
@@ -150,9 +135,14 @@ class TextEnhancer:
                                                                           model='silero_te')
 
     def enhance(self, text: str) -> str:
-        """
-        Улучшение текста (исправление грамматических ошибок и т.д.)
-        :param text: Текст, который нужно улучшить
-        :return: Улучшенный текст
+        """Улучшение текста (исправление грамматических ошибок и т.д.)
+
+        Args:
+          text: Текст, который нужно улучшить
+          text: str: 
+
+        Returns:
+          Улучшенный текст
+
         """
         return self._apply_te(text.lower(), lan='ru')

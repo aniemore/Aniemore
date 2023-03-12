@@ -21,9 +21,7 @@ RecognizerOutputOne: Type[Dict[str, float]] = dict
 
 
 class RecognizerOutputTuple(NamedTuple):
-    """
-    Структура для хранения результатов распознавания
-    """
+    """Структура для хранения результатов распознавания"""
     key: str
     output: RecognizerOutputOne
 
@@ -39,19 +37,22 @@ class BaseRecognizer:
         """
         Инициализируем класс
 
-        :param model_name: название модели из `aniemore.custom.classes`
-        :param device: 'cpu' or 'cuda' or 'cuda:<number>'
-        :param setup_on_init: если True, то сразу загружаем модель и токенайзер в память
+        Args:
+         model_name: название модели из `aniemore.custom.classes`
+         device: 'cpu' or 'cuda' or 'cuda:<number>'
+         setup_on_init: если True, то сразу загружаем модель и токенайзер в память
+         args: аргументы для инициализации класса
+         kwargs: аргументы для инициализации класса
 
-        :param args: аргументы для инициализации класса
-        :param kwargs: аргументы для инициализации класса
-
-        >>> from aniemore.models import HuggingFaceModel
-        >>> pass
+        Examples:
+         >>> from aniemore.models import HuggingFaceModel
+         >>> from aniemore.recognizers.text import TextRecognizer
+         >>> tr = TextRecognizer(HuggingFaceModel.Text.Bert_Tiny, device='cuda:0')
+         >>> tr.recognize('Как же я люблю природу, она прекрасна!!)))')
         """
         self._model: Any = None
-        self.config: AutoConfig = None
         self._device: str = None
+        self.config: AutoConfig = None
         self.model_cls: Type[PreTrainedModel] = None
         self.model_url: str = None
 
@@ -62,9 +63,7 @@ class BaseRecognizer:
             self._setup_variables()
 
     def _setup_variables(self) -> None:
-        """
-        Загружаем модель и экстрактор признаков в память
-        :return: None
+        """Загружаем модель и экстрактор признаков в память
         """
         # this is only for audio models
         if self.model_cls is BertForSequenceClassification:
@@ -85,45 +84,35 @@ class BaseRecognizer:
 
     # add example to the list
     def _add_to_class_handlers(self):
-        """
-        Добавляем экземпляр класса в список всех экземпляров этого класса
-        :return: None
-        """
+        """Добавляем экземпляр класса в список всех экземпляров этого класса"""
         self.CLASS_HANDLERS.append(self)
 
     # remove example from the list
     def _remove_from_class_handlers(self):
-        """
-        Удаляем экземпляр класса из списка всех экземпляров этого класса
-        :return: None
-        """
+        """Удаляем экземпляр класса из списка всех экземпляров этого класса"""
         if self in self.CLASS_HANDLERS:
             self.CLASS_HANDLERS.remove(self)
 
     # get all examples that is not an existing example of this class
     def _get_class_handlers(self):
-        """
-        Получаем список всех экземпляров этого класса, кроме текущего
-        :return: List[Any]
-        """
+        """Получаем список всех экземпляров этого класса, кроме текущего"""
         return [handler for handler in self.CLASS_HANDLERS if handler is not self]
 
     @property
     def device(self) -> str:
-        """
-        Возвращаем устройство, на котором будет работать модель
-
-        :return: 'cpu' or 'cuda' or 'cuda:<number>'
-        """
+        """Возвращаем устройство, на котором будет работать модель"""
         return self._device
 
     @device.setter
     def device(self, value) -> None:
-        """
-        Устанавливаем устройство, на котором будет работать модель
+        """Устанавливаем устройство, на котором будет работать модель
 
-        :param value: возможные значения: 'cpu', 'cuda', 'cuda:<number>'
-        :return: None or raises ValueError
+        Args:
+          value: возможные значения: 'cpu', 'cuda', 'cuda:<number>'
+
+        Returns:
+          None or raises ValueError
+
         """
         if value != 'cpu':
             if not self.validate_device(value):
@@ -139,11 +128,14 @@ class BaseRecognizer:
 
     @classmethod
     def validate_device(cls, value) -> bool:
-        """
-        Валидатор для устройства, на котором будет работать модель
+        """Валидатор для устройства, на котором будет работать модель
 
-        :param value: возможные значения: 'cpu', 'cuda', 'cuda:<number>'
-        :return: True or False
+        Args:
+          value: возможные значения: 'cpu', 'cuda', 'cuda:<number>'
+
+        Returns:
+          True or False
+
         """
         try:
             torch.device(value)
@@ -157,22 +149,23 @@ class BaseRecognizer:
 
     @property
     def model(self) -> Model:
-        """
-        Возвращаем текущую модель, которая будет распозновать данные
+        """Возвращаем текущую модель, которая будет распозновать данные
 
-        :return: `Model`
+        Returns:
+            модель, которая загружена в текущий момент
         """
         return Model(model_cls=self.model_cls, model_url=self.model_url)
 
     @model.setter
     def model(self, model: Model) -> None:
-        """
-        Устанавливаем модель, которая будет распозновать данные
+        """Устанавливаем модель, которая будет распозновать данные
 
-        :param model: валидная модель (тип модели смотрите в `aniemore.config.Model`)
-        :return: None
-        :raises:
-            ValueError: если модель не прошла валидацию
+        Args:
+          model: валидная модель (тип модели смотрите в `aniemore.config.Model`)
+
+        Returns:
+          None
+
         """
         if self.validate_model(model):
             self.model_cls, self.model_url = model
@@ -182,6 +175,14 @@ class BaseRecognizer:
 
     @classmethod
     def validate_model(cls, model: Model) -> bool:
+        """
+        Валидатор для загружаемой модели
+        Args:
+          model: модель из `models.py`
+
+        Returns:
+         `True` если прошел валидацию, `False` если не прошёл
+        """
         return all([
             isinstance(model, Model),
             isinstance(model.model_url, str),
@@ -195,16 +196,19 @@ class BaseRecognizer:
             device: Union[str, torch.device],
             clear_same_device_cache: bool = True,
             clear_cache_after: bool = True) -> ContextManager:
-        """
-        Context manager that allows you to switch the model to the given device
+        """Context manager that allows you to switch the model to the given device
 
-        :param device: 'cpu' or 'cuda' or 'cuda:<number>'
-        :param clear_same_device_cache: clear cuda cache after switching to the given device
-        :param clear_cache_after: clear cuda cache after switching to the original device
-        :return: None
+        Args:
+          device: cpu' or 'cuda' or 'cuda:<number>'
+          clear_same_device_cache: clear cuda cache after switching to the given device
+          clear_cache_after: clear cuda cache after switching to the original device
 
-        >>> with model.on_device('cuda'):
-        >>>     # do something
+        Returns:
+          None
+
+        Examples:
+         >>> with model.on_device('cuda'):
+         >>>     # do something
         """
         try:
             # get other examples of this class and switch them to cpu device
@@ -239,18 +243,24 @@ class BaseRecognizer:
                 gc.collect()
 
     @contextmanager
-    def with_model(self, model: Model, device: Union[str, torch.device],
-                   clear_cache_after: bool = True) -> ContextManager:
-        """
-        Context manager that allows you to switch the model to the given model
+    def with_model(
+            self,
+            model: Model,
+            device: Union[str, torch.device],
+            clear_cache_after: bool = True) -> ContextManager:
+        """Context manager that allows you to switch the model to the given model
 
-        :param model: model
-        :param device: 'cpu' or 'cuda' or 'cuda:<number>'
-        :param clear_cache_after: clear cuda cache after switching to the original device
-        :return: None
+        Args:
+          model: model
+          device: cpu' or 'cuda' or 'cuda:<number>'
+          clear_cache_after: clear cuda cache after switching to the original device
 
-        >>> with vr.with_model(new_model, 'cuda') as new_model:
-        >>>     # do something
+        Returns:
+          None
+
+        Examples:
+         >>> with vr.with_model(new_model, 'cuda') as new_model:
+         >>>     # do something
         """
         new_handler = None
 
@@ -271,53 +281,86 @@ class BaseRecognizer:
                 gc.collect()
 
     def _get_torch_scores(self, *args, **kwargs) -> torch.Tensor:
-        """
-        Получаем тензор с предсказаниями модели
+        """[PROTECTED METHOD] Получаем тензор с предсказаниями модели
 
-        :param args: аргументы
-        :param kwargs: аргументы
-        :return: тензор с предсказаниями модели
+        Args:
+          args: аргументы
+          kwargs: аргументы
+
+        Returns:
+          тензор с предсказаниями модели
+
         """
         raise NotImplementedError
 
-    def predict(self, *args, **kwargs) -> Union[RecognizerOutputOne, RecognizerOutputMany]:
-        """
-        Получаем предсказания модели
+    def recognize(self, *args, **kwargs) -> Union[RecognizerOutputOne, RecognizerOutputMany]:
+        """Получаем предсказания модели
 
-        :param args: аргументы
-        :param kwargs: аргументы
-        :return: предсказания модели
+        Args:
+          args: аргументы
+          kwargs: аргументы
+
+        Returns:
+          предсказания модели
+
         """
         raise NotImplementedError
 
-    def _predict_one(self, *args, **kwargs) -> RecognizerOutputOne:
-        """
-        Получаем предсказания модели для одного объекта
+    def _recognize_one(self, *args, **kwargs) -> RecognizerOutputOne:
+        """[PROTECTED METHOD] Получаем предсказания модели для одного объекта
 
-        :param args: аргументы
-        :param kwargs: аргументы
-        :return: предсказания модели
+        Args:
+          args: аргументы
+          kwargs: аргументы
+
+        Returns:
+          предсказания модели
+
         """
         raise NotImplementedError
 
-    def _predict_many(self, *args, **kwargs) -> RecognizerOutputMany:
-        """
-        Получаем предсказания модели для нескольких объектов
+    def _recognize_many(self, *args, **kwargs) -> RecognizerOutputMany:
+        """[PROTECTED METHOD] Получаем предсказания модели для нескольких объектов
 
-        :param args: аргументы
-        :param kwargs: аргументы
-        :return: предсказания модели
+        Args:
+          args: аргументы
+          kwargs: аргументы
+
+        Returns:
+          предсказания модели
+
         """
         raise NotImplementedError
+
+    def _get_many_results(self, items: List[str], scores: torch.Tensor) -> RecognizerOutputMany:
+        """[PROTECTED METHOD] Принимает на вход исследуемые объекты и результат от модели,
+        и возвращает результат
+
+        Args:
+          items: список исследуемых объектов
+          scores: выход от функции _get_torch_scores
+
+        Returns:
+          dict` с результатами по каждому объекту
+
+        """
+        result = []
+        for path_, score in zip(items, scores):
+            score = {k: v for k, v in zip(self.config.id2label.values(), score.tolist())}
+            result.append(RecognizerOutputTuple(path_, RecognizerOutputOne(**score)))
+        return RecognizerOutputMany(tuple(result))
 
     @classmethod
     def _get_single_label(cls, output: Union[RecognizerOutputOne, RecognizerOutputMany]) -> \
             Union[str, dict]:
-        """
-        Получаем метку из предсказаний модели
+        """[PROTECTED CLASS METHOD] Получаем метку из предсказаний модели
 
-        :param output: предсказания модели
-        :return: метка
+        Args:
+          output: предсказания модели
+
+        Returns:
+          метка
+
         """
         # check if output is dict of [str: float]
         if isinstance(output, dict) and all(isinstance(x, float) for x in output.values()):

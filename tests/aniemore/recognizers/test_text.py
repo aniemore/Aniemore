@@ -39,13 +39,13 @@ def test_device():
 
 def test_predict_one_sequence_emotion():
     text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
-    emotion = text_module.predict("Какой же сегодня прекрасный день, братья", return_single_label=True)
+    emotion = text_module.recognize("Какой же сегодня прекрасный день, братья", return_single_label=True)
     assert emotion == 'happiness'
 
 
 def test_predict_one_sequence_emotions():
     text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
-    emotions = text_module.predict("Какой же сегодня прекрасный день, братья", return_single_label=False)
+    emotions = text_module.recognize("Какой же сегодня прекрасный день, братья", return_single_label=False)
     assert max(emotions, key=emotions.get) == 'happiness'
 
 
@@ -53,7 +53,7 @@ def test_predict_many_sequence_emotion():
     text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
     text = ['Какой же сегодня прекрасный день, братья', 'Мама, я не хочу умирать...']
     o_emotions = ['happiness', 'sadness']
-    emotions = text_module.predict(text, return_single_label=True)
+    emotions = text_module.recognize(text, return_single_label=True)
     for original, (text_, emotion) in zip(text, emotions.items()):
         assert original == text_ and emotion == o_emotions.pop(0)
 
@@ -62,7 +62,7 @@ def test_predict_many_sequence_emotions():
     text_module = TextRecognizer(model=GENERAL_TEXT_MODULE)
     text = ['Какой же сегодня прекрасный день, братья', 'Мама, я не хочу умирать...']
     o_emotions = ['happiness', 'sadness']
-    emotions = text_module.predict(text, return_single_label=False)
+    emotions = text_module.recognize(text, return_single_label=False)
     for original, (text_, emotion) in zip(text, emotions.items()):
         assert original == text_ and max(emotion, key=emotion.get) == o_emotions.pop(0)
 

@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "aniemore"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
     "Ilya Lubenets <lii291001@gmail.com>",
     "Nikita Davidchuk <ar4ikov228@gmail.com>",
@@ -18,7 +18,7 @@ license = "MIT"
 description = "Aniemore (Artem Nikita Ilya EMOtion REcognition) is a library for emotion recognition in voice and text for russian language."
 readme = "README.md"
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -31,6 +31,8 @@ classifiers = [
     "Topic :: Multimedia :: Sound/Audio :: Speech",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
+    "Environment :: GPU :: NVIDIA CUDA",
+
 ]
 
 [tool.poetry.urls]
