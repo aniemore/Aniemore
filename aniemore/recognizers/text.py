@@ -56,7 +56,7 @@ class TextRecognizer(BaseRecognizer):
           text(str): текст для анализа
 
         Returns:
-            результат распознования
+          результат распознования
         """
 
         scores = self._get_torch_scores(text, self.tokenizer, self.device)
@@ -72,7 +72,7 @@ class TextRecognizer(BaseRecognizer):
           texts: список текстов для анализа
 
         Returns:
-            результат распознования
+          результат распознования
         """
         scores = self._get_torch_scores(texts, self.tokenizer, self.device).detach().cpu().numpy()
         results: RecognizerOutputMany = self._get_many_results(texts, scores)
@@ -104,18 +104,15 @@ class TextEnhancer:
     _apply_te = None
 
     def __init__(self, setup_on_init: bool = True) -> None:
-        """
-        Инициализация класса
-        :param setup_on_init: Если True, модель будет загружена при инициализации класса
+        """Инициализация класса
+        Args:
+          setup_on_init: Если True, модель будет загружена при инициализации класса
         """
         if setup_on_init:
             self._load_model()
 
     def _load_model(self) -> None:
-        """Загрузка модели. Если она уже загружена, то ничего не произойдет
-        Returns:
-            None
-        """
+        """Загрузка модели. Если она уже загружена, то ничего не произойдет."""
         if sys.platform == 'darwin':  # MacOS check
             warning_text = ("Silero models are not supported on MacOS. "
                             "To make it work, we've changed torch engine to `qnnpack`. Use this with caution.")
