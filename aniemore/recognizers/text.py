@@ -11,20 +11,11 @@ from transformers import AutoTokenizer
 from aniemore.utils.classes import (
     BaseRecognizer,
     RecognizerOutputMany,
-    RecognizerOutputOne,
-    RecognizerOutputTuple
+    RecognizerOutputOne
 )
 
 
 class TextRecognizer(BaseRecognizer):
-    """
-    Используем уже обученную (на модифированном CEDR датасете) rubert-tiny2 модель.
-    Список эмоций и их ID в модели можете посмотроеть в config.yml
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def _get_torch_scores(
             self,
             text: Union[str, List[str]],
@@ -64,9 +55,11 @@ class TextRecognizer(BaseRecognizer):
         """
         [PROTECTED METHOD] Получаем строку текста, токенизируем, отправляем в модель и возвращаем "
 
-        :param text: текст для анализа
-        :type text: str
-        :return:
+        Args:
+          text(str): текст для анализа
+
+        Returns:
+            результат распознования
         """
 
         scores = self._get_torch_scores(text, self.tokenizer, self.device)
@@ -135,10 +128,10 @@ class TextEnhancer:
         if setup_on_init:
             self.load_model()
 
-    def load_model(self) -> None:
-        """
-        Загрузка модели. Если она уже загружена, то ничего не произойдет
-        :return: None
+    def _load_model(self) -> None:
+        """Загрузка модели. Если она уже загружена, то ничего не произойдет
+        Returns:
+            None
         """
         if sys.platform == 'darwin':  # MacOS check
             warning_text = ("Silero models are not supported on MacOS. "
@@ -150,6 +143,13 @@ class TextEnhancer:
                                                                           model='silero_te')
 
     def enhance(self, text: str) -> str:
+        """Улучшение текста (исправление грамматических ошибок и т.д.)
+
+        Args:
+          text: Текст, который нужно улучшить
+
+        Returns:
+          Улучшенный текст
         """
         Улучшение текста (исправление грамматических ошибок и т.д.)
         :param text: Текст, который нужно улучшить
