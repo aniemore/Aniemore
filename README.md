@@ -4,7 +4,7 @@
 
 #### Основные технические параметры
 
-- Объем набора данных Russian Emotional Speech Dialogs содержит 2000 аудиофрагментов представляющих 200 различных людей;
+- Объем набора данных Russian Emotional Speech Dialogues содержит более 3000 аудиофрагментов представляющих 200 различных людей;
 - Модели способны распознавать эмоции в зашумленных аудиофайлах длительностью в 3 секунды;
 - Скорость обработки и ответа модели составляет не более 5 секунд;
 - Пословная ошибка модели WER 30%;
@@ -20,7 +20,7 @@ Aniemore - это библиотека для Python, которая позво�
 программное обеспечение возможность определять эмоциональный фон речи человека, как в голосе, 
 так и в тексте. Для этого в библиотеке разработано два соответсвующих модуля - Voice и Text.
 
-Aniemore содержит свой собственный датасет RESD (Russian Emotional Speech Dialoges) и другие 
+Aniemore содержит свой собственный датасет RESD (Russian Emotional Speech Dialogues) и другие 
 наборы данных разного объема, которые вы можете использовать для обучения своих моделей.
 
 | Датасет        | Примечание                                                                  |
@@ -38,10 +38,10 @@ Aniemore содержит свой собственный датасет RESD (R
 | [**wav2vec2-xlsr-53-russian-emotion-recognition**](https://huggingface.co/Aniemore/wav2vec2-xlsr-53-russian-emotion-recognition) | 73%      |
 | [**wav2vec2-emotion-russian-resd**](https://huggingface.co/Aniemore/wav2vec2-emotion-russian-resd)                               | 75%      |
 | [**wavlm-emotion-russian-resd**](https://huggingface.co/Aniemore/wavlm-emotion-russian-resd)                                     | 82%      |
+| [**hubert-emotion-russian-resd**](https://huggingface.co/Aniemore/hubert-emotion-russian-resd)                                   | 75%      |
 | [**unispeech-sat-emotion-russian-resd Copied**](https://huggingface.co/Aniemore/unispeech-sat-emotion-russian-resd)              | 72%      |
 | Текстовые модели                                                                                                                 |          |
 | [**rubert-base-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-base-emotion-russian-cedr-m7)                   | ---%     |
-| [**hubert-emotion-russian-resd**](https://huggingface.co/Aniemore/hubert-emotion-russian-resd)                                   | 75%      |
 | [**rubert-tiny2-russian-emotion-detection**](https://huggingface.co/Aniemore/rubert-tiny2-russian-emotion-detection)             | 85%      |
 | [**rubert-large-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-large-emotion-russian-cedr-m7)                 | ---%     |
 | [**rubert-tiny-emotion-russian-cedr-m7 **](https://huggingface.co/Aniemore/rubert-tiny-emotion-russian-cedr-m7)                  | ---%     |
