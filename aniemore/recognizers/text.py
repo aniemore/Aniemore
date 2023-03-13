@@ -12,14 +12,10 @@ from aniemore.utils.classes import (
     BaseRecognizer,
     RecognizerOutputMany,
     RecognizerOutputOne,
-    RecognizerOutputTuple
 )
 
 
 class TextRecognizer(BaseRecognizer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def _get_torch_scores(
             self,
             text: Union[str, List[str]],
@@ -58,7 +54,6 @@ class TextRecognizer(BaseRecognizer):
 
         Args:
           text(str): текст для анализа
-          text: str: 
 
         Returns:
             результат распознования
@@ -118,12 +113,8 @@ class TextEnhancer:
 
     def _load_model(self) -> None:
         """Загрузка модели. Если она уже загружена, то ничего не произойдет
-        :return: None
-
-        Args:
-
         Returns:
-
+            None
         """
         if sys.platform == 'darwin':  # MacOS check
             warning_text = ("Silero models are not supported on MacOS. "
@@ -139,10 +130,8 @@ class TextEnhancer:
 
         Args:
           text: Текст, который нужно улучшить
-          text: str: 
 
         Returns:
           Улучшенный текст
-
         """
         return self._apply_te(text.lower(), lan='ru')

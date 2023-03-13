@@ -33,16 +33,14 @@ class BaseRecognizer:
     # all examples of this class will be saved in this list
     CLASS_HANDLERS: ClassVar[List[Any]] = []
 
-    def __init__(self, model: Model = None, device: str = 'cpu', setup_on_init: bool = True, *args, **kwargs) -> None:
+    def __init__(self, model: Model = None, device: str = 'cpu', setup_on_init: bool = True) -> None:
         """
         Инициализируем класс
 
         Args:
-         model_name: название модели из `aniemore.custom.classes`
-         device: 'cpu' or 'cuda' or 'cuda:<number>'
-         setup_on_init: если True, то сразу загружаем модель и токенайзер в память
-         args: аргументы для инициализации класса
-         kwargs: аргументы для инициализации класса
+         model(aniemore.models.Model): название модели из `aniemore.custom.classes`
+         device(str): 'cpu' or 'cuda' or 'cuda:<number>'
+         setup_on_init(bool): если True, то сразу загружаем модель и токенайзер в память
 
         Examples:
          >>> from aniemore.models import HuggingFaceModel
@@ -51,10 +49,10 @@ class BaseRecognizer:
          >>> tr.recognize('Как же я люблю природу, она прекрасна!!)))')
         """
         self._model: Any = None
-        self._device: str = None
+        self._device: Union[str, None] = None
         self.config: AutoConfig = None
         self.model_cls: Type[PreTrainedModel] = None
-        self.model_url: str = None
+        self.model_url: Union[str, None] = None
 
         self.model = model
         self.device = device

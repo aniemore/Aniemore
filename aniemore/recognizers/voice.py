@@ -7,15 +7,11 @@ from aniemore.utils.classes import (
     BaseRecognizer,
     RecognizerOutputOne,
     RecognizerOutputMany,
-    RecognizerOutputTuple
 )
 
 
 # noinspection PyUnresolvedReferences
 class VoiceRecognizer(BaseRecognizer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     @classmethod
     def speech_file_to_array_fn(cls, path):
         """Загружаем аудиофайл в массив
