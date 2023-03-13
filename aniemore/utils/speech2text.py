@@ -4,19 +4,19 @@ from functools import partial
 
 
 class SpeechSegment(NamedTuple):
-    """
-    Структура для хранения результатов распознавания
+    """Структура для хранения результатов распознавания
 
-    id: локальный номер сегмента
-    seek: смещение в секундах от начала аудио
-    start: время начала сегмента в секундах
-    end: время конца сегмента в секундах
-    text: распознанный текст
-    tokens: список токенов
-    temperature: whisper температура
-    avg_logprob: средняя вероятность
-    no_speech_prob: вероятность отсутствия речи
-    compression_ratio: коэффициент сжатия
+    Attributes:
+     id(int): локальный номер сегмента
+     seek(int): смещение в секундах от начала аудио
+     start(float): время начала сегмента в секундах
+     end(float): время конца сегмента в секундах
+     text(str): распознанный текст
+     tokens(List[int]): список токенов
+     temperature(float): whisper температура
+     avg_logprob(float): средняя вероятность
+     no_speech_prob(float): вероятность отсутствия речи
+     compression_ratio(float): коэффициент сжатия
     """
     id: int
     seek: int
@@ -31,12 +31,13 @@ class SpeechSegment(NamedTuple):
 
 
 class Speech2TextOutput(NamedTuple):
-    """
-    Структура для хранения результатов распознавания
+    """Структура для хранения результатов распознавания
 
-    text: распознанный текст
-    language: язык
-    segments: список сегментов
+    Attributes:
+     text(str): распознанный текст
+     language(str): язык
+     segments(List[SpeechSegment]): список сегментов
+
     """
     text: str
     language: str
@@ -45,10 +46,11 @@ class Speech2TextOutput(NamedTuple):
 
 class Speech2Text:
     def __init__(self, model_path: str):
-        """
-        Инициализация модели распознавания речи
+        """Инициализация модели распознавания речи
 
-        model_path: путь к модели
+        Args:
+         model_path: путь к модели
+
         """
         self.model = whisper.load_model(model_path)
 
@@ -56,9 +58,11 @@ class Speech2Text:
         """
         Распознать аудио
 
-        audio_path: путь к аудио
+        Args:
+         audio_path: путь к аудио
 
-        return: результат распознавания
+        Returns:
+         результат распознавания
 
         >>> speech2text = Speech2Text('base')
         >>> speech2text('audio.wav')
@@ -66,15 +70,17 @@ class Speech2Text:
         return self.recognize(audio_path)
 
     def recognize(self, audio_path: str) -> Speech2TextOutput:
-        """
-        Распознать аудио
+        """Распознать аудио
 
-        audio_path: путь к аудио
+        Args:
+         audio_path: путь к аудио
 
-        return: результат распознавания
+        Returns:
+          результат распознования
 
-        >>> speech2text = Speech2Text('base')
-        >>> speech2text.recognize('audio.wav')
+        Examples:
+         >>> speech2text = Speech2Text('base')
+         >>> speech2text.recognize('audio.wav')
         """
         result = self.model.transcribe(audio_path)
         result['segments'] = [SpeechSegment(**x) for x in result['segments']]

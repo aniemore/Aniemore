@@ -137,3 +137,8 @@ dmypy.json
 # used for trainig, search hugging face
 *silero_models.yml
 
+# local patches
+*.patch
+
+
+

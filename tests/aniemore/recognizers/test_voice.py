@@ -54,7 +54,7 @@ def test_device_setter():
 
 def test_predict_one_sequence_emotion():
     vr = VoiceRecognizer(model=GENERAL_WAV2VEC_MODEL)
-    emotion = vr.predict(TEST_VOICE_DATA_PATH)
+    emotion = vr.recognize(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -62,7 +62,7 @@ def test_predict_one_sequence_emotion():
 
 def test_predict_many_sequence_emotion():
     vr = VoiceRecognizer(model=GENERAL_WAV2VEC_MODEL)
-    emotions = vr.predict([TEST_VOICE_DATA_PATH, TEST_VOICE_DATA_PATH])
+    emotions = vr.recognize([TEST_VOICE_DATA_PATH, TEST_VOICE_DATA_PATH])
 
     # check return type
     assert type(emotions) == dict
@@ -70,7 +70,7 @@ def test_predict_many_sequence_emotion():
 
 def test_single_label_on_one():
     vr = VoiceRecognizer(model=GENERAL_WAV2VEC_MODEL)
-    emotion = vr.predict(TEST_VOICE_DATA_PATH, return_single_label=True)
+    emotion = vr.recognize(TEST_VOICE_DATA_PATH, return_single_label=True)
 
     # check return type
     assert type(emotion) == str
@@ -78,7 +78,7 @@ def test_single_label_on_one():
 
 def test_single_label_on_many():
     vr = VoiceRecognizer(model=GENERAL_WAV2VEC_MODEL)
-    emotions = vr.predict([TEST_VOICE_DATA_PATH, TEST_VOICE_DATA_PATH], return_single_label=True)
+    emotions = vr.recognize([TEST_VOICE_DATA_PATH, TEST_VOICE_DATA_PATH], return_single_label=True)
 
     # check return type
     assert type(emotions) == dict
@@ -91,7 +91,7 @@ def test_context_manager():
     with vr.on_device('cuda:0'):
         # check device
         assert str(vr._model.device) == 'cuda:0'
-        emotion = vr.predict(TEST_VOICE_DATA_PATH)
+        emotion = vr.recognize(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -104,7 +104,7 @@ def test_one_to_many_context_manager():
     with vr.on_device('cuda:0'):
         # check device
         assert str(vr._model.device) == 'cuda:0'
-        emotion = vr.predict(TEST_VOICE_DATA_PATH)
+        emotion = vr.recognize(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -112,7 +112,7 @@ def test_one_to_many_context_manager():
     with vr.on_device('cuda:0'):
         # check device
         assert str(vr._model.device) == 'cuda:0'
-        emotion = vr.predict(TEST_VOICE_DATA_PATH)
+        emotion = vr.recognize(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -130,7 +130,7 @@ def test_many_to_many_context_manager():
         assert str(vr2._model.device) == 'cpu'
         assert str(vr3._model.device) == 'cpu'
 
-        emotion = vr1.predict(TEST_VOICE_DATA_PATH)
+        emotion = vr1.recognize(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -141,7 +141,7 @@ def test_many_to_many_context_manager():
         assert str(vr2._model.device) == 'cuda:0'
         assert str(vr3._model.device) == 'cpu'
 
-        emotion = vr2.predict(TEST_VOICE_DATA_PATH)
+        emotion = vr2.recognize(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
@@ -152,7 +152,7 @@ def test_many_to_many_context_manager():
         assert str(vr2._model.device) == 'cpu'
         assert str(vr3._model.device) == 'cuda:0'
 
-        emotion = vr3.predict(TEST_VOICE_DATA_PATH)
+        emotion = vr3.recognize(TEST_VOICE_DATA_PATH)
 
     # check return type
     assert type(emotion) == dict
