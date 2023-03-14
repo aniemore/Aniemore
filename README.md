@@ -4,7 +4,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1_W2ngr_ShrLdTLVTBP3XF176JW1zdChl)
 
-[![PyPI version](https://badge.fury.io/py/aniemore.svg)](https://badge.fury.io/py/aniemore)
+[![PyPI version](https://img.shields.io/pypi/v/aniemore)](https://img.shields.io/pypi/v/aniemore)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/aniemore)](https://img.shields.io/pypi/pyversions/aniemore)
 [![PyPI - Wheel](https://img.shields.io/pypi/wheel/aniemore)](https://img.shields.io/pypi/wheel/aniemore)
 [![PyPI - License](https://img.shields.io/pypi/l/aniemore)](https://img.shields.io/pypi/l/aniemore)
