@@ -1,6 +1,17 @@
-![Aniemore Logo](logo.png)
+![Aniemore Logo](images/logo.png)
 
  **Aniemore** - это открытая библиотека искусственного интеллекта для потоковой аналитики эмоциональных оттенков речи человека.
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1_W2ngr_ShrLdTLVTBP3XF176JW1zdChl)
+
+[![PyPI version](https://badge.fury.io/py/aniemore.svg)](https://badge.fury.io/py/aniemore)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/aniemore)](https://img.shields.io/pypi/pyversions/aniemore)
+[![PyPI - Wheel](https://img.shields.io/pypi/wheel/aniemore)](https://img.shields.io/pypi/wheel/aniemore)
+[![PyPI - License](https://img.shields.io/pypi/l/aniemore)](https://img.shields.io/pypi/l/aniemore)
+[![PyPI - Status](https://img.shields.io/pypi/status/aniemore)](https://img.shields.io/pypi/status/aniemore)
+[![Downloads](https://img.shields.io/pypi/dm/aniemore)](https://pypistats.org/packages/aniemore)
+[![CodeQL](https://github.com/aniemore/Aniemore/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/aniemore/Aniemore/actions/workflows/github-code-scanning/codeql)
+[![Bandit](https://github.com/aniemore/Aniemore/actions/workflows/bandit.yml/badge.svg)](https://github.com/aniemore/Aniemore/actions/workflows/bandit.yml)
 
 #### Основные технические параметры
 
@@ -11,8 +22,6 @@
 - Совокупная точность модели 75%
 - Диапазон распознавания эмоций: злость, отвращение, страх, счастье, интерес, грусть, нейтрально;
 - Акустические возможности - 3 уровня.
-
-
 
 
 ## Описание
@@ -47,7 +56,7 @@ Aniemore содержит свой собственный датасет RESD (R
 | [**rubert-tiny-emotion-russian-cedr-m7 **](https://huggingface.co/Aniemore/rubert-tiny-emotion-russian-cedr-m7)                  | ---%     |
 
 #### Показатели моделей в разрезе эмоций
-![показатели моделей.jpg](model_sota.jpg)
+![показатели моделей.jpg](images/model_sota.jpg)
 
 
 ## <a name="Install"></a>	Установка
@@ -57,9 +66,13 @@ pip install aniemore
 <hr>
 
 ### Пример использования
+
+Ниже приведены простые примеры использования библиотеки. Для более детальных примеров, в том числе **загрузка cобственной модели** - смотрите сделанный для этого *Google Colab*
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1_W2ngr_ShrLdTLVTBP3XF176JW1zdChl)
 #### Распознавание эмоций в тексте
-```shell
-# @title Text: Bert_Tiny2
+```python
+# @title Text - Recognize: single text - single label
 import torch
 from aniemore.recognizers.text import TextRecognizer
 from aniemore.models import HuggingFaceModel
@@ -72,7 +85,7 @@ tr.recognize('это работает? :(', return_single_label=True)
 ```
 #### Распознавание эмоций в голосе
 
-```shell
+```python
 # @title Text: wavlm-emotion-russian-resd 
 import torch
 from aniemore.recognizers.voice import VoiceRecognizer
