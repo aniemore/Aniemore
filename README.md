@@ -41,19 +41,19 @@ Aniemore содержит свой собственный датасет RESD (R
 
 Вы можете использовать готовые предобученные модели из библиотеки: 
 
-| Модель                                                                                                                           | Точность |
-|----------------------------------------------------------------------------------------------------------------------------------|----------|
-| Голосовые модели                                                                                                                 |          |
+| Модель                                                                                                                          | Точность |
+|---------------------------------------------------------------------------------------------------------------------------------|----------|
+| Голосовые модели                                                                                                                |          |
 | [**wav2vec2-xlsr-53-russian-emotion-recognition**](https://huggingface.co/Aniemore/wav2vec2-xlsr-53-russian-emotion-recognition) | 73%      |
-| [**wav2vec2-emotion-russian-resd**](https://huggingface.co/Aniemore/wav2vec2-emotion-russian-resd)                               | 75%      |
-| [**wavlm-emotion-russian-resd**](https://huggingface.co/Aniemore/wavlm-emotion-russian-resd)                                     | 82%      |
-| [**hubert-emotion-russian-resd**](https://huggingface.co/Aniemore/hubert-emotion-russian-resd)                                   | 75%      |
-| [**unispeech-sat-emotion-russian-resd Copied**](https://huggingface.co/Aniemore/unispeech-sat-emotion-russian-resd)              | 72%      |
-| Текстовые модели                                                                                                                 |          |
-| [**rubert-base-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-base-emotion-russian-cedr-m7)                   | ---%     |
-| [**rubert-tiny2-russian-emotion-detection**](https://huggingface.co/Aniemore/rubert-tiny2-russian-emotion-detection)             | 85%      |
-| [**rubert-large-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-large-emotion-russian-cedr-m7)                 | ---%     |
-| [**rubert-tiny-emotion-russian-cedr-m7 **](https://huggingface.co/Aniemore/rubert-tiny-emotion-russian-cedr-m7)                  | ---%     |
+| [**wav2vec2-emotion-russian-resd**](https://huggingface.co/Aniemore/wav2vec2-emotion-russian-resd)                              | 75%      |
+| [**wavlm-emotion-russian-resd**](https://huggingface.co/Aniemore/wavlm-emotion-russian-resd)                                    | 82%      |
+| [**hubert-emotion-russian-resd**](https://huggingface.co/Aniemore/hubert-emotion-russian-resd)                                  | 75%      |
+| [**unispeech-sat-emotion-russian-resd Copied**](https://huggingface.co/Aniemore/unispeech-sat-emotion-russian-resd)             | 72%      |
+| Текстовые модели                                                                                                                |          |
+| [**rubert-base-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-base-emotion-russian-cedr-m7)                  | 74%      |
+| [**rubert-tiny2-russian-emotion-detection**](https://huggingface.co/Aniemore/rubert-tiny2-russian-emotion-detection)            | 85%      |
+| [**rubert-large-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-large-emotion-russian-cedr-m7)                | 76%      |
+| [**rubert-tiny-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-tiny-emotion-russian-cedr-m7)                  | 72%      |
 
 #### Показатели моделей в разрезе эмоций
 ![показатели моделей.jpg](images/model_sota.jpg)
