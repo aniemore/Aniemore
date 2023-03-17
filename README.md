@@ -86,7 +86,7 @@ tr.recognize('это работает? :(', return_single_label=True)
 #### Распознавание эмоций в голосе
 
 ```python
-# @title Text: wavlm-emotion-russian-resd 
+# @title Voice - Recognize: signle audio - single label
 import torch
 from aniemore.recognizers.voice import VoiceRecognizer
 from aniemore.models import HuggingFaceModel
