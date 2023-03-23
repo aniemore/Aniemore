@@ -41,13 +41,13 @@ classifiers = [
 "Hugging Face Homepage" = "https://huggingface.co/Aniemore"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
+python = ">=3.8,<3.12"
 transformers = "^4.26.1"
 numpy = "^1.24.2"
 openai-whisper = "^20230124"
 datasets = "^2.9.0"
-torch = { version = "^1.13.1", source = 'pytorch' }
-torchaudio = { version = "^0.13.1", source = 'pytorch' }
+torch = { version = "^2.0.0", source = 'pytorch' }
+torchaudio = { version = "^2.0.1", source = 'pytorch' }
 soundfile = {version = "^0.12.1", platform = "win32"}
 sox = [
     {version = "^1.4.1", platform =  "linux" },
@@ -61,7 +61,7 @@ pip = "^23.0.1"
 
 [[tool.poetry.source]]
 name = "pytorch"
-url = "https://download.pytorch.org/whl/cu117/"
+url = "https://download.pytorch.org/whl/cu118/"
 default = false
 secondary = true
 

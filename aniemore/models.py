@@ -67,7 +67,7 @@ class HuggingFaceModel:
             References:
                 Our models and datasets placed here: https://huggingface.co/Aniemore
         """
-        Bert_Tiny = Model(BertForSequenceClassification, 'aniemore/rubert-tiny2-russian-emotion-detection')
-        Bert_Tiny2 = Model(BertForSequenceClassification, 'aniemore/rubert-tiny-emotion-russian-cedr-m7')
+        Bert_Tiny2 = Model(BertForSequenceClassification, 'aniemore/rubert-tiny2-russian-emotion-detection')
+        Bert_Tiny = Model(BertForSequenceClassification, 'aniemore/rubert-tiny-emotion-russian-cedr-m7')
         Bert_Base = Model(BertForSequenceClassification, 'aniemore/rubert-base-emotion-russian-cedr-m7')
         Bert_Large = Model(BertForSequenceClassification, 'aniemore/rubert-large-emotion-russian-cedr-m7')
