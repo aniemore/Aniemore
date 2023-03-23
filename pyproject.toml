@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "aniemore"
-version = "1.0.4"
+version = "1.0.5"
 authors = [
     "Ilya Lubenets <lii291001@gmail.com>",
     "Nikita Davidchuk <ar4ikov228@gmail.com>",
