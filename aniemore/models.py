@@ -44,7 +44,7 @@ class HuggingFaceModel:
                  Wav2Vec2_Custom: `aniemore/wav2vec2-xlsr-53-russian-emotion-recognition`
                  WavLM: `aniemore/wavlm-emotion-russian-resd`
                  Hubert: `aniemore/hubert-emotion-russian-resd`
-                 UniSpeech: `aniemore/unispeech-emotion-russian-resd`
+                 UniSpeech: `aniemore/unispeech-sat-emotion-russian-resd`
             References:
                 Our models and datasets placed here: https://huggingface.co/Aniemore
         """
@@ -55,7 +55,7 @@ class HuggingFaceModel:
         )
         WavLM = Model(WavLMForSequenceClassification, 'aniemore/wavlm-emotion-russian-resd')
         Hubert = Model(HubertForSequenceClassification, 'aniemore/hubert-emotion-russian-resd')
-        UniSpeech = Model(UniSpeechSatForSequenceClassification, 'aniemore/unispeech-emotion-russian-resd')
+        UniSpeech = Model(UniSpeechSatForSequenceClassification, 'aniemore/unispeech-sat-emotion-russian-resd')
 
     class Text(Model, Enum):
         """
