@@ -25,6 +25,7 @@ def run_around_test():
     import gc
     gc.collect()
 
+
 def test_create_empty():
     with pytest.raises(AttributeError):
         VoiceRecognizer()

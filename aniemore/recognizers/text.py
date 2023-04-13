@@ -5,8 +5,7 @@ import sys
 from typing import List, Union
 import torch
 import warnings
-import torch.nn.functional as F
-from transformers import AutoTokenizer
+from transformers import PreTrainedTokenizerBase
 
 from aniemore.utils.classes import (
     BaseRecognizer,
@@ -19,7 +18,7 @@ class TextRecognizer(BaseRecognizer):
     def _get_torch_scores(
             self,
             text: Union[str, List[str]],
-            tokenizer: AutoTokenizer,
+            tokenizer: PreTrainedTokenizerBase,
             device: str,
             max_length: int = 512,
             padding: bool = True,
@@ -44,9 +43,17 @@ class TextRecognizer(BaseRecognizer):
             padding=padding,
             truncation=truncation,
             return_tensors='pt').to(device)
+
         with torch.no_grad():
             logits = self._model.to(self.device)(**inputs).logits
-        scores = F.softmax(logits, dim=1)
+
+        if self._logistic_fct is torch.sigmoid:
+            scores = self._logistic_fct(logits)
+        elif self._logistic_fct is torch.softmax:
+            scores = self._logistic_fct(logits, dim=1)
+        else:
+            raise ValueError('logistic_fct must be one of torch.sigmoid or torch.softmax')
+
         return scores
 
     def _recognize_one(self, text: str) -> RecognizerOutputOne:
@@ -76,6 +83,7 @@ class TextRecognizer(BaseRecognizer):
         """
         scores = self._get_torch_scores(texts, self.tokenizer, self.device).detach().cpu().numpy()
         results: RecognizerOutputMany = self._get_many_results(texts, scores)
+
         return results
 
     def recognize(self, text: Union[List[str], str], return_single_label=False) -> \

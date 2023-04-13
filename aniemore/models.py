@@ -13,6 +13,11 @@ from transformers import (
     PreTrainedModel
 )
 
+from aniemore.custom.models import (
+    Wav2Vec2BertForSequenceClassification,
+    WavLMBertForSequenceClassification
+)
+
 
 class Model(NamedTuple):
     """
@@ -71,3 +76,22 @@ class HuggingFaceModel:
         Bert_Tiny = Model(BertForSequenceClassification, 'aniemore/rubert-tiny-emotion-russian-cedr-m7')
         Bert_Base = Model(BertForSequenceClassification, 'aniemore/rubert-base-emotion-russian-cedr-m7')
         Bert_Large = Model(BertForSequenceClassification, 'aniemore/rubert-large-emotion-russian-cedr-m7')
+
+    class MultiModal(Model, Enum):
+        """
+            Attributes:
+                Wav2Vec2BertTiny: `aniemore/wav2vec2-bert-tiny2-emotion-russian-resd`
+                Wav2Vec2BertBase: `aniemore/wav2vec2-bert-base-emotion-russian-resd`
+                WavLMBertTiny: `aniemore/wavlm-bert-tiny2-emotion-russian-resd`
+                WavLMBertBase: `Ar4ikov/wavlm-bert-base-multimodal-emotion-russian-resd`
+            References:
+                Our models and datasets placed here: https://huggingface.co/Aniemore
+        """
+        Wav2Vec2BertTiny = Model(
+            Wav2Vec2BertForSequenceClassification, 'aniemore/wav2vec2-bert-tiny2-emotion-russian-resd')
+        Wav2Vec2BertBase = Model(
+            Wav2Vec2BertForSequenceClassification, 'aniemore/wav2vec2-bert-base-emotion-russian-resd')
+        WavLMBertTiny = Model(
+            WavLMBertForSequenceClassification, 'aniemore/wavlm-bert-tiny2-emotion-russian-resd')
+        WavLMBertBase = Model(
+            WavLMBertForSequenceClassification, 'aniemore/wavlm-bert-base-emotion-russian-resd')
