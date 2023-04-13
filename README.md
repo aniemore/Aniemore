@@ -63,6 +63,22 @@ Aniemore содержит свой собственный датасет RESD (R
 ```shell
 pip install aniemore
 ```
+## <a name="Install"></a>	Минимальные требования к оборудованию
+
+- Wav2Vec2: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
+- WavLM: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
+- Hubert: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
+- UniSpeechSAT: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
+- Bert_Tiny/Bert_Tiny2: 2 ядра, 4 ГБ, 40 ГБ SSD
+- Bert_Base: 2 ядра, 4 ГБ ОЗУ, 40 ГБ SSD
+- Bert_Large: 2 ядра, 8 ГБ ОЗУ, 40 ГБ SSD
+- Whisper Tiny: 2 ядра 4 ГБ ОЗУ, 40 ГБ SSD
+- Whisper Base: 2 ядра 4 ГБ ОЗУ, 40 ГБ SSD
+- Whisper Small: 2 ядра 4 ГБ ОЗУ, 40 ГБ SSD
+- Whisper Medium: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
+- Whisper Large: 2 ядра 16 ГБ ОЗУ, 40 ГБ SSD
+- TextEnhancer: 2 ядра, 4 ГБ ОЗУ, 40 ГБ SSD 
+
 <hr>
 
 ### Пример использования
