@@ -88,12 +88,11 @@ pip install aniemore
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1_W2ngr_ShrLdTLVTBP3XF176JW1zdChl)
 #### Распознавание эмоций в тексте
 ```python
-# @title Text - Recognize: single text - single label
 import torch
 from aniemore.recognizers.text import TextRecognizer
 from aniemore.models import HuggingFaceModel
 
-model=HuggingFaceModel.Text.Bert_Tiny2
+model = HuggingFaceModel.Text.Bert_Tiny2
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 tr = TextRecognizer(model=model, device=device)
 
@@ -102,15 +101,44 @@ tr.recognize('это работает? :(', return_single_label=True)
 #### Распознавание эмоций в голосе
 
 ```python
-# @title Voice - Recognize: signle audio - single label
 import torch
 from aniemore.recognizers.voice import VoiceRecognizer
 from aniemore.models import HuggingFaceModel
 
-model=HuggingFaceModel.Voice.WavLM
+model = HuggingFaceModel.Voice.WavLM
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 vr = VoiceRecognizer(model=model, device=device)
 vr.recognize('/content/ваш-звуковой-файл.wav', return_single_label=True)
+```
+#### Распознавание эмоций (мультимодальный метод)
+
+```python
+import torch
+from aniemore.recognizers.multimodal import VoiceTextRecognizer
+from aniemore.utils.speech2text import SmallSpeech2Text
+from aniemore.models import HuggingFaceModel
+
+model = HuggingFaceModel.Voice.WavLM
+s2t_model = SmallSpeech2Text()
+
+text = SmallSpeech2Text.recognize('/content/ваш-звуковой-файл.wav').text
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+vtr = VoiceTextRecognizer(model=model, device=device)
+vtr.recognize(('/content/ваш-звуковой-файл.wav', text), return_single_label=True)
+```
+#### Распознавание эмоций (мультимодальный метод с автоматическим распознаванием речи)
+
+```python
+import torch
+from aniemore.recognizers.multimodal import MultiModalRecognizer
+from aniemore.utils.speech2text import SmallSpeech2Text
+from aniemore.models import HuggingFaceModel
+
+model = HuggingFaceModel.Voice.WavLM
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+mr = MultiModalRecognizer(model=model, s2t_model=SmallSpeech2Text(), device=device)
+mr.recognize('/content/ваш-звуковой-файл.wav', return_single_label=True)
 ```
 <hr>
 
