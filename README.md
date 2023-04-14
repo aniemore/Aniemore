@@ -41,19 +41,19 @@ Aniemore содержит свой собственный датасет RESD (R
 
 Вы можете использовать готовые предобученные модели из библиотеки: 
 
-| Модель                                                                                                                          | Точность |
-|---------------------------------------------------------------------------------------------------------------------------------|----------|
-| Голосовые модели                                                                                                                |          |
-| [**wav2vec2-xlsr-53-russian-emotion-recognition**](https://huggingface.co/Aniemore/wav2vec2-xlsr-53-russian-emotion-recognition) | 73%      |
-| [**wav2vec2-emotion-russian-resd**](https://huggingface.co/Aniemore/wav2vec2-emotion-russian-resd)                              | 75%      |
-| [**wavlm-emotion-russian-resd**](https://huggingface.co/Aniemore/wavlm-emotion-russian-resd)                                    | 82%      |
-| [**hubert-emotion-russian-resd**](https://huggingface.co/Aniemore/hubert-emotion-russian-resd)                                  | 75%      |
-| [**unispeech-sat-emotion-russian-resd Copied**](https://huggingface.co/Aniemore/unispeech-sat-emotion-russian-resd)             | 72%      |
-| Текстовые модели                                                                                                                |          |
-| [**rubert-base-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-base-emotion-russian-cedr-m7)                  | 74%      |
-| [**rubert-tiny2-russian-emotion-detection**](https://huggingface.co/Aniemore/rubert-tiny2-russian-emotion-detection)            | 85%      |
-| [**rubert-large-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-large-emotion-russian-cedr-m7)                | 76%      |
-| [**rubert-tiny-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-tiny-emotion-russian-cedr-m7)                  | 72%      |
+| Модель                                                                                                                            | Точность |
+|-----------------------------------------------------------------------------------------------------------------------------------|----------|
+| Голосовые модели                                                                                                                  |          |
+| [**wav2vec2-xlsr-53-russian-emotion-recognition**](https://huggingface.co/Aniemore/wav2vec2-xlsr-53-russian-emotion-recognition)  | 73%      |
+| [**wav2vec2-emotion-russian-resd**](https://huggingface.co/Aniemore/wav2vec2-emotion-russian-resd)                                | 75%      |
+| [**wavlm-emotion-russian-resd**](https://huggingface.co/Aniemore/wavlm-emotion-russian-resd)                                      | 82%      |
+| [**hubert-emotion-russian-resd**](https://huggingface.co/Aniemore/hubert-emotion-russian-resd)                                    | 75%      |
+| [**unispeech-sat-emotion-russian-resd Copied**](https://huggingface.co/Aniemore/unispeech-sat-emotion-russian-resd)               | 72%      |
+| Текстовые модели                                                                                                                  |          |
+| [**rubert-base-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-base-emotion-russian-cedr-m7)                    | 74%      |
+| [**rubert-tiny2-russian-emotion-detection**](https://huggingface.co/Aniemore/rubert-tiny2-russian-emotion-detection)              | 85%      |
+| [**rubert-large-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-large-emotion-russian-cedr-m7)                  | 76%      |
+| [**rubert-tiny-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-tiny-emotion-russian-cedr-m7)                    | 72%      |
 
 #### Показатели моделей в разрезе эмоций
 ![показатели моделей.jpg](images/model_sota.jpg)
@@ -65,20 +65,21 @@ pip install aniemore
 ```
 ## <a name="Install"></a>	Минимальные требования к оборудованию
 
-- Wav2Vec2: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
-- WavLM: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
-- Hubert: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
-- UniSpeechSAT: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
-- Bert_Tiny/Bert_Tiny2: 2 ядра, 4 ГБ, 40 ГБ SSD
-- Bert_Base: 2 ядра, 4 ГБ ОЗУ, 40 ГБ SSD
-- Bert_Large: 2 ядра, 8 ГБ ОЗУ, 40 ГБ SSD
-- Whisper Tiny: 2 ядра 4 ГБ ОЗУ, 40 ГБ SSD
-- Whisper Base: 2 ядра 4 ГБ ОЗУ, 40 ГБ SSD
-- Whisper Small: 2 ядра 4 ГБ ОЗУ, 40 ГБ SSD
-- Whisper Medium: 2 ядра 8 ГБ ОЗУ, 40 ГБ SSD
-- Whisper Large: 2 ядра 16 ГБ ОЗУ, 40 ГБ SSD
-- TextEnhancer: 2 ядра, 4 ГБ ОЗУ, 40 ГБ SSD 
-
+| Архитектура              | ЦПУ      | ОЗУ   | SSD   |
+|--------------------------|----------|-------|-------|
+| **Wave2Vec2**            | 2 ядра   | 8 ГБ  | 40 ГБ |
+| **WaveLM**               | 2 ядра   | 8 ГБ  | 40 ГБ |
+| **Hubert**               | 2 ядра   | 8 ГБ  | 40 ГБ |
+| **UniSpeechSAT**         | 2 ядра   | 8 ГБ  | 40 ГБ |
+| **Bert_Tiny/Bert_Tiny2** | 2 ядра   | 4 ГБ  | 40 ГБ |
+| **Bert_Base**            | 2 ядра   | 4 ГБ  | 40 ГБ |
+| **Bert_Large**           | 2 ядра   | 8 ГБ  | 40 ГБ |
+| **Whisper Tiny**         | 2 ядра   | 4 ГБ  | 40 ГБ |
+| **Whisper Base**         | 2 ядра   | 4 ГБ  | 40 ГБ |
+| **Whisper Small**        | 2 ядра   | 4 ГБ  | 40 ГБ |
+| **Whisper Medium**       | 2 ядра   | 8 ГБ  | 40 ГБ |
+| **Whisper Large**        | 2 ядра   | 16 ГБ | 40 ГБ |
+| **TextEnhancer**         | 2 ядра   | 4 ГБ  | 40 ГБ |
 <hr>
 
 ### Пример использования
