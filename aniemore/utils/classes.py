@@ -8,6 +8,7 @@ from typing import ClassVar, ContextManager, Any, List, Union, NamedTuple, Dict,
 
 import transformers
 from transformers import (
+    PretrainedConfig,
     AutoConfig,
     AutoTokenizer,
     AutoFeatureExtractor,
@@ -15,6 +16,7 @@ from transformers import (
     PreTrainedModel
 )
 
+from aniemore.custom.models import BaseMultiModalForSequenceBaseClassification
 from aniemore.models import Model
 
 RecognizerOutputOne: Type[Dict[str, float]] = dict
@@ -50,9 +52,10 @@ class BaseRecognizer:
         """
         self._model: Any = None
         self._device: Union[str, None] = None
-        self.config: AutoConfig = None
+        self.config: Type[PretrainedConfig] = None
         self.model_cls: Type[PreTrainedModel] = None
         self.model_url: Union[str, None] = None
+        self._logistic_fct: Any = None
 
         self.model = model
         self.device = device
@@ -63,8 +66,11 @@ class BaseRecognizer:
     def _setup_variables(self) -> None:
         """Загружаем модель и экстрактор признаков в память
         """
-        # this is only for audio models
-        if self.model_cls is BertForSequenceClassification:
+        # check if model_cls is child of BaseMultiModalForSequenceClassification
+        if issubclass(self.model_cls, BaseMultiModalForSequenceBaseClassification):
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_url)
+            self.feature_extractor = AutoFeatureExtractor.from_pretrained(self.model_url)
+        elif self.model_cls is BertForSequenceClassification:
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_url)
         else:
             self.feature_extractor = AutoFeatureExtractor.from_pretrained(self.model_url)
@@ -79,6 +85,14 @@ class BaseRecognizer:
             )
         finally:
             self._model = self._model.to(self.device)
+
+        # check problem type and set logistic function (sigmoid or softmax, else softmax)
+        if self.config.problem_type == 'single_label_classification':
+            self._logistic_fct = torch.softmax
+        elif self.config.problem_type == 'multi_label_classification':
+            self._logistic_fct = torch.sigmoid
+        else:
+            self._logistic_fct = torch.softmax
 
     # add example to the list
     def _add_to_class_handlers(self):
@@ -349,8 +363,10 @@ class BaseRecognizer:
         return RecognizerOutputMany(tuple(result))
 
     @classmethod
-    def _get_single_label(cls, output: Union[RecognizerOutputOne, RecognizerOutputMany]) -> \
-            Union[str, dict]:
+    def _get_single_label(
+            cls,
+            output: Union[RecognizerOutputOne, RecognizerOutputMany]
+    ) -> Union[str, dict]:
         """[PROTECTED CLASS METHOD] Получаем метку из предсказаний модели
 
         Args:
@@ -369,6 +385,32 @@ class BaseRecognizer:
         if isinstance(output, dict) and all(isinstance(x, dict) for x in output.values()):
             # max score in list
             return {x: max(output[x], key=output[x].get) for x in output.keys()}
+
+    @classmethod
+    def _get_top_n_labels(
+            cls,
+            output: Union[RecognizerOutputOne, RecognizerOutputMany],
+            n: int
+    ) -> List[str] | dict:
+        """[PROTECTED CLASS METHOD] Получаем метку из предсказаний модели
+
+        Args:
+            output: предсказания модели
+            n: количество меток, которые нужно вернуть
+
+        Returns:
+            метка
+
+        """
+        # check if output is dict of [str: float]
+        if isinstance(output, dict) and all(isinstance(x, float) for x in output.values()):
+            # max score in dict
+            return sorted(output, key=output.get, reverse=True)[:n]
+
+        # check if output is dict of [str: dict[str: float]]
+        if isinstance(output, dict) and all(isinstance(x, dict) for x in output.values()):
+            # max score in list
+            return {x: sorted(output[x], key=output[x].get, reverse=True)[:n] for x in output.keys()}
 
     def __del__(self):
         """

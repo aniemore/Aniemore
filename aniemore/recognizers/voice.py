@@ -10,7 +10,6 @@ from aniemore.utils.classes import (
 )
 
 
-# noinspection PyUnresolvedReferences
 class VoiceRecognizer(BaseRecognizer):
     @classmethod
     def speech_file_to_array_fn(cls, path):
@@ -51,7 +50,13 @@ class VoiceRecognizer(BaseRecognizer):
 
         del inputs
 
-        scores = torch.softmax(logits, dim=1)
+        if self._logistic_fct is torch.sigmoid:
+            scores = self._logistic_fct(logits)
+        elif self._logistic_fct is torch.softmax:
+            scores = self._logistic_fct(logits, dim=1)
+        else:
+            raise ValueError('logistic_fct must be torch.sigmoid or torch.softmax')
+
         return scores
 
     def _recognize_one(self, path: str) -> RecognizerOutputOne:
@@ -87,12 +92,14 @@ class VoiceRecognizer(BaseRecognizer):
             speeches.append(speech)
         scores: torch.Tensor = self._get_torch_scores(speeches)
         results: RecognizerOutputMany = self._get_many_results(paths, scores)
+
         return results
 
-    # TODO: add single_label option
-
-    def recognize(self, paths: Union[List[str], str], return_single_label: bool = False) -> \
-            Union[RecognizerOutputOne, RecognizerOutputMany]:
+    def recognize(
+            self,
+            paths: Union[List[str], str],
+            return_single_label: bool = False
+    ) -> Union[RecognizerOutputOne, RecognizerOutputMany]:
         """Прогнозируем файлы
 
         Args:

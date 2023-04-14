@@ -1,5 +1,7 @@
+import numpy
+import torch
 import whisper
-from typing import NamedTuple, List
+from typing import NamedTuple, List, Union
 from functools import partial
 
 
@@ -69,7 +71,7 @@ class Speech2Text:
         """
         return self.recognize(audio_path)
 
-    def recognize(self, audio_path: str) -> Speech2TextOutput:
+    def recognize(self, audio_path: Union[str, torch.Tensor, numpy.ndarray]) -> Speech2TextOutput:
         """Распознать аудио
 
         Args:
