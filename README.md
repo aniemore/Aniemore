@@ -119,7 +119,7 @@ from aniemore.recognizers.multimodal import VoiceTextRecognizer
 from aniemore.utils.speech2text import SmallSpeech2Text
 from aniemore.models import HuggingFaceModel
 
-model = HuggingFaceModel.Voice.WavLM
+model = HuggingFaceModel.MultiModal.WavLMBertBase
 s2t_model = SmallSpeech2Text()
 
 text = SmallSpeech2Text.recognize('/content/ваш-звуковой-файл.wav').text
@@ -136,7 +136,7 @@ from aniemore.recognizers.multimodal import MultiModalRecognizer
 from aniemore.utils.speech2text import SmallSpeech2Text
 from aniemore.models import HuggingFaceModel
 
-model = HuggingFaceModel.Voice.WavLM
+model = HuggingFaceModel.MultiModal.WavLMBertBase
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 mr = MultiModalRecognizer(model=model, s2t_model=SmallSpeech2Text(), device=device)
 mr.recognize('/content/ваш-звуковой-файл.wav', return_single_label=True)
