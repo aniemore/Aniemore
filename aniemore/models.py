@@ -88,10 +88,10 @@ class HuggingFaceModel:
                 Our models and datasets placed here: https://huggingface.co/Aniemore
         """
         Wav2Vec2BertTiny = Model(
-            Wav2Vec2BertForSequenceClassification, 'aniemore/wav2vec2-bert-tiny2-emotion-russian-resd')
+            Wav2Vec2BertForSequenceClassification, 'aniemore/wav2vec2-bert-tiny2-s-emotion-russian-resd')
         Wav2Vec2BertBase = Model(
-            Wav2Vec2BertForSequenceClassification, 'aniemore/wav2vec2-bert-base-emotion-russian-resd')
+            Wav2Vec2BertForSequenceClassification, 'aniemore/wav2vec2-bert-base-s-emotion-russian-resd')
         WavLMBertTiny = Model(
-            WavLMBertForSequenceClassification, 'aniemore/wavlm-bert-tiny2-emotion-russian-resd')
+            WavLMBertForSequenceClassification, 'aniemore/wavlm-bert-tiny2-s-emotion-russian-resd')
         WavLMBertBase = Model(
-            WavLMBertForSequenceClassification, 'aniemore/wavlm-bert-base-emotion-russian-resd')
+            WavLMBertForSequenceClassification, 'aniemore/wavlm-bert-base-s-emotion-russian-resd')
