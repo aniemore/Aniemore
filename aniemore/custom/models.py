@@ -447,7 +447,7 @@ class FineTuneWav2Vec2BertForSequenceClassification(BaseMultiModalForSequenceBas
         self.audio_config = Wav2Vec2Config.from_dict(self.config.Wav2Vec2Model)
         self.text_config = BertConfig.from_dict(self.config.BertModel)
         self.audio_model = Wav2Vec2Model.from_pretrained(self.audio_config._name_or_path, config=self.audio_config)
-        self.text_model = BertModel(self.text_config._name_or_path, config=self.text_config)
+        self.text_model = BertModel.from_pretrained(self.text_config._name_or_path, config=self.text_config)
         self.classifier = torch.nn.Linear(
             self.audio_config.hidden_size + self.text_config.hidden_size, self.num_labels
         )
@@ -475,7 +475,7 @@ class FineTuneWavLMBertForSequenceClassification(BaseMultiModalForSequenceBaseCl
         self.audio_config = WavLMConfig.from_dict(self.config.WavLMModel)
         self.text_config = BertConfig.from_dict(self.config.BertModel)
         self.audio_model = WavLMModel.from_pretrained(self.audio_config._name_or_path, config=self.audio_config)
-        self.text_model = BertModel(self.text_config._name_or_path, config=self.text_config)
+        self.text_model = BertModel.from_pretrained(self.text_config._name_or_path, config=self.text_config)
         self.classifier = torch.nn.Linear(
             self.audio_config.hidden_size + self.text_config.hidden_size, self.num_labels
         )

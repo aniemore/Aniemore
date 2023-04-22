@@ -96,7 +96,13 @@ class VoiceTextRecognizer(BaseRecognizer):
 
         del inputs
 
-        scores = self._logistic_fct(logits, dim=1)
+        if self._logistic_fct is torch.sigmoid:
+            scores = self._logistic_fct(logits)
+        elif self._logistic_fct is torch.softmax:
+            scores = self._logistic_fct(logits, dim=1)
+        else:
+            raise ValueError('logistic_fct must be torch.sigmoid or torch.softmax')
+
         return scores
 
     def _recognize_one(self, path: str, text: str) -> RecognizerOutputOne:
