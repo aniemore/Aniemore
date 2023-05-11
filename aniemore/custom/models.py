@@ -291,8 +291,7 @@ class BaseMultiModalForSequenceBaseClassification(BaseClassificationModel):  # n
 
 
 class Wav2Vec2ForVoiceClassification(BaseModelForVoiceBaseClassification):  # noqa
-    """
-    Wav2Vec2ForVoiceClassification is a model for voice classification task
+    """Wav2Vec2ForVoiceClassification is a model for voice classification task
      (e.g. speech command, voice activity detection, etc.)
 
     Args:
@@ -311,8 +310,7 @@ class Wav2Vec2ForVoiceClassification(BaseModelForVoiceBaseClassification):  # no
 
 
 class WavLMForVoiceClassification(BaseModelForVoiceBaseClassification):  # noqa
-    """
-    WavLMForVoiceClassification is a model for voice classification task
+    """WavLMForVoiceClassification is a model for voice classification task
      (e.g. speech command, voice activity detection, etc.)
 
     Args:
@@ -331,8 +329,7 @@ class WavLMForVoiceClassification(BaseModelForVoiceBaseClassification):  # noqa
 
 
 class UniSpeechSatForVoiceClassification(BaseModelForVoiceBaseClassification):  # noqa
-    """
-    UniSpeechSatForVoiceClassification is a model for voice classification task
+    """UniSpeechSatForVoiceClassification is a model for voice classification task
      (e.g. speech command, voice activity detection, etc.)
 
     Args:
@@ -351,8 +348,7 @@ class UniSpeechSatForVoiceClassification(BaseModelForVoiceBaseClassification):  
 
 
 class HubertForVoiceClassification(BaseModelForVoiceBaseClassification):  # noqa
-    """
-    HubertForVoiceClassification is a model for voice classification task
+    """HubertForVoiceClassification is a model for voice classification task
      (e.g. speech command, voice activity detection, etc.)
 
     Args:
@@ -371,8 +367,7 @@ class HubertForVoiceClassification(BaseModelForVoiceBaseClassification):  # noqa
 
 
 class Wav2Vec2BertForSequenceClassification(BaseMultiModalForSequenceBaseClassification):  # noqa
-    """
-    Wav2Vec2BertForSequenceClassification is a model for sequence classification task
+    """Wav2Vec2BertForSequenceClassification is a model for sequence classification task
      (e.g. sentiment analysis, text classification, etc.)
 
     Args:
@@ -399,8 +394,7 @@ class Wav2Vec2BertForSequenceClassification(BaseMultiModalForSequenceBaseClassif
 
 
 class WavLMBertForSequenceClassification(BaseMultiModalForSequenceBaseClassification):  # noqa
-    """
-    WavLMBertForSequenceClassification is a model for sequence classification task
+    """WavLMBertForSequenceClassification is a model for sequence classification task
      (e.g. sentiment analysis, text classification, etc.)
 
     Args:
@@ -427,8 +421,7 @@ class WavLMBertForSequenceClassification(BaseMultiModalForSequenceBaseClassifica
 
 
 class FineTuneWav2Vec2BertForSequenceClassification(BaseMultiModalForSequenceBaseClassification):  # noqa
-    """
-    FineTuneWav2Vec2BertForSequenceClassification is a model for sequence classification task
+    """FineTuneWav2Vec2BertForSequenceClassification is a model for sequence classification task
      (e.g. sentiment analysis, text classification, etc.) for fine-tuning
 
     Args:
@@ -455,8 +448,7 @@ class FineTuneWav2Vec2BertForSequenceClassification(BaseMultiModalForSequenceBas
 
 
 class FineTuneWavLMBertForSequenceClassification(BaseMultiModalForSequenceBaseClassification):  # noqa
-    """
-    FineTuneWavLMBertForSequenceClassification is a model for sequence classification task
+    """FineTuneWavLMBertForSequenceClassification is a model for sequence classification task
      (e.g. sentiment analysis, text classification, etc.) for fine-tuning
 
     Args:
@@ -480,3 +472,205 @@ class FineTuneWavLMBertForSequenceClassification(BaseMultiModalForSequenceBaseCl
             self.audio_config.hidden_size + self.text_config.hidden_size, self.num_labels
         )
         self.init_weights()
+
+
+class FusionModuleQ(torch.nn.Module):
+    """FusionModuleQ is a fusion module for the query
+    https://arxiv.org/abs/2302.13661
+    https://arxiv.org/abs/2207.04697
+
+    Args:
+        audio_dim (int): audio dimension
+        text_dim (int): text dimension
+        num_heads (int): number of heads
+    """
+    def __init__(self, audio_dim, text_dim, num_heads):
+        super().__init__()
+
+        # pick the lowest dimension of the two modalities
+        self.dimension = min(audio_dim, text_dim)
+
+        # attention modules
+        self.a_self_attention = torch.nn.MultiheadAttention(self.dimension, num_heads=num_heads)
+        self.t_self_attention = torch.nn.MultiheadAttention(self.dimension, num_heads=num_heads)
+
+        # layer norm
+        self.audio_norm = torch.nn.LayerNorm(self.dimension)
+        self.text_norm = torch.nn.LayerNorm(self.dimension)
+
+    def forward(self, audio_output, text_output):
+        """Forward pass
+
+        Args:
+            audio_output (torch.Tensor): audio output
+            text_output (torch.Tensor): text output
+
+        Returns:
+            torch.Tensor: audio output of the fusion module
+        """
+        # Multihead cross attention (dims ARE switched)
+        audio_attn, _ = self.a_self_attention(audio_output, text_output, text_output)
+        text_attn, _ = self.t_self_attention(text_output, audio_output, audio_output)
+
+        # Add & Norm with dropout
+        audio_add = self.audio_norm(audio_output + audio_attn)
+        text_add = self.text_norm(text_output + text_attn)
+
+        return audio_add, text_add
+
+
+class AudioTextFusionModelForSequenceClassificaion(BaseMultiModalForSequenceBaseClassification):  # noqa
+    def __init__(self, config):
+        """
+        Args:
+            config (MultiModalConfig): config
+        Attributes:
+            audio_projector (Union[torch.nn.Linear, None]): Projection layer for audio embeds
+            text_projector (Union[torch.nn.Linear, None]): Projection layer for text embeds
+            audio_avg_pool (Union[torch.nn.AvgPool1d, None]): Audio average pool (out from fusion block)
+            text_avg_pool (Union[torch.nn.AvgPool1d, None]): Text average pool (out from fusion block)
+        """
+        super().__init__(config)
+        self.audio_projector: Union[torch.nn.Linear, None] = None
+        self.text_projector: Union[torch.nn.Linear, None] = None
+        self.audio_avg_pool: Union[torch.nn.AvgPool1d, None] = None
+        self.text_avg_pool: Union[torch.nn.AvgPool1d, None] = None
+
+
+class WavLMBertFusionForSequenceClassification(AudioTextFusionModelForSequenceClassificaion):  # noqa
+    """
+    WavLMBertForSequenceClassification is a model for sequence classification task
+     (e.g. sentiment analysis, text classification, etc.) for fine-tuning
+    Args:
+        config (WavLMBertConfig): config
+    Attributes:
+        config (WavLMBertConfig): config
+        audio_config (WavLMConfig): wavlm config
+        text_config (BertConfig): bert config
+        audio_model (WavLMModel): wavlm model
+        text_model (BertModel): bert model
+        fusion_module_{i} (FusionModuleQ): Fusion Module Q
+        audio_projector (Union[torch.nn.Linear, None]): Projection layer for audio embeds
+        text_projector (Union[torch.nn.Linear, None]): Projection layer for text embeds
+        audio_avg_pool (Union[torch.nn.AvgPool1d, None]): Audio average pool (out from fusion block)
+        text_avg_pool (Union[torch.nn.AvgPool1d, None]): Text average pool (out from fusion block)
+        classifier (torch.nn.Linear): classifier
+    """
+
+    def __init__(self, config, finetune=False):
+        super().__init__(config)
+        self.audio_config = WavLMConfig.from_dict(self.config.WavLMModel)
+        self.text_config = BertConfig.from_dict(self.config.BertModel)
+
+        if not finetune:
+            self.audio_model = WavLMModel(self.audio_config)
+            self.text_model = BertModel(self.text_config)
+
+        else:
+            self.audio_model = WavLMModel.from_pretrained(self.audio_config._name_or_path, config=self.audio_config)
+            self.text_model = BertModel.from_pretrained(self.text_config._name_or_path, config=self.text_config)
+
+        # fusion module with V3 strategy (one projection on entry, no projection in continuous)
+        for i in range(self.config.num_fusion_layers):
+            setattr(self, f"fusion_module_{i + 1}", FusionModuleQ(
+                self.audio_config.hidden_size, self.text_config.hidden_size, self.config.num_heads
+            ))
+
+        self.audio_projector = torch.nn.Linear(self.audio_config.hidden_size, self.text_config.hidden_size)
+        self.text_projector = torch.nn.Linear(self.text_config.hidden_size, self.text_config.hidden_size)
+
+        # Avg Pool
+        self.audio_avg_pool = torch.nn.AvgPool1d(self.config.kernel_size)
+        self.text_avg_pool = torch.nn.AvgPool1d(self.config.kernel_size)
+
+        # output dimensions of wav2vec2 and bert are 768 and 1024 respectively
+        cls_dim = min(self.audio_config.hidden_size, self.text_config.hidden_size)
+        self.classifier = torch.nn.Linear(
+            (cls_dim * 2) // self.config.kernel_size, self.config.num_labels
+        )
+
+        self.init_weights()
+
+    def forward(
+            self,
+            input_ids=None,
+            input_values=None,
+            text_attention_mask=None,
+            audio_attention_mask=None,
+            token_type_ids=None,
+            position_ids=None,
+            head_mask=None,
+            inputs_embeds=None,
+            labels=None,
+            output_attentions=None,
+            output_hidden_states=None,
+            return_dict=True,
+    ):
+        """Forward method for multimodal model for sequence classification task (e.g. text + audio)
+        Args:
+            input_ids (torch.LongTensor, optional): input ids. Defaults to None.
+            input_values (torch.FloatTensor, optional): input values. Defaults to None.
+            text_attention_mask (torch.LongTensor, optional): text attention mask. Defaults to None.
+            audio_attention_mask (torch.LongTensor, optional): audio attention mask. Defaults to None.
+            token_type_ids (torch.LongTensor, optional): token type ids. Defaults to None.
+            position_ids (torch.LongTensor, optional): position ids. Defaults to None.
+            head_mask (torch.FloatTensor, optional): head mask. Defaults to None.
+            inputs_embeds (torch.FloatTensor, optional): inputs embeds. Defaults to None.
+            labels (torch.LongTensor, optional): labels. Defaults to None.
+            output_attentions (bool, optional): output attentions. Defaults to None.
+            output_hidden_states (bool, optional): output hidden states. Defaults to None.
+            return_dict (bool, optional): return dict. Defaults to True.
+        Returns:
+            torch.FloatTensor: logits
+        """
+        audio_output = self.audio_model(
+            input_values=input_values,
+            attention_mask=audio_attention_mask,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=return_dict
+        )
+        text_output = self.text_model(
+            input_ids=input_ids,
+            attention_mask=text_attention_mask,
+            token_type_ids=token_type_ids,
+            position_ids=position_ids,
+            head_mask=head_mask,
+            inputs_embeds=inputs_embeds,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=return_dict,
+        )
+
+        # Mean pooling
+        audio_avg = self.merged_strategy(audio_output.last_hidden_state, mode=self.config.pooling_mode)
+
+        # Projection
+        audio_proj = self.audio_projector(audio_avg)
+        text_proj = self.text_projector(text_output.pooler_output)
+
+        audio_mha, text_mha = None, None
+
+        for i in range(self.config.num_fusion_layers):
+            fusion_module = getattr(self, f"fusion_module_{i + 1}")
+
+            if i == 0:
+                audio_mha, text_mha = fusion_module(audio_proj, text_proj)
+            else:
+                audio_mha, text_mha = fusion_module(audio_mha, text_mha)
+
+        audio_avg = self.audio_avg_pool(audio_mha)
+        text_avg = self.text_avg_pool(text_mha)
+
+        fusion_output = torch.concat((audio_avg, text_avg), dim=1)
+
+        logits = self.classifier(fusion_output)
+        loss = None
+
+        if labels is not None:
+            loss = self.compute_loss(logits, labels)
+
+        return SpeechModelOutput(
+            loss=loss,
+            logits=logits
+        )

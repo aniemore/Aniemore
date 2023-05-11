@@ -15,7 +15,7 @@ from transformers import (
 
 from aniemore.custom.models import (
     Wav2Vec2BertForSequenceClassification,
-    WavLMBertForSequenceClassification
+    WavLMBertForSequenceClassification, WavLMBertFusionForSequenceClassification
 )
 
 
@@ -95,3 +95,8 @@ class HuggingFaceModel:
             WavLMBertForSequenceClassification, 'aniemore/wavlm-bert-tiny2-s-emotion-russian-resd')
         WavLMBertBase = Model(
             WavLMBertForSequenceClassification, 'aniemore/wavlm-bert-base-s-emotion-russian-resd')
+
+        # Fusion Version
+        WavLMBertFusion = Model(
+            WavLMBertFusionForSequenceClassification, 'aniemore/wavlm-bert-fusion-s-emotion-russian-resd'
+        )
