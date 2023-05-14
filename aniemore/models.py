@@ -13,9 +13,10 @@ from transformers import (
     PreTrainedModel
 )
 
-from aniemore.custom.models import (
-    Wav2Vec2BertForSequenceClassification,
-    WavLMBertForSequenceClassification, WavLMBertFusionForSequenceClassification
+from aniemore.custom.modeling_wav2vec2 import Wav2Vec2BertForSequenceClassification
+from aniemore.custom.modeling_wavlm import (
+    WavLMBertForSequenceClassification,
+    WavLMBertFusionForSequenceClassification
 )
 
 
