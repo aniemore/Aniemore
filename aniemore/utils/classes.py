@@ -16,7 +16,7 @@ from transformers import (
     PreTrainedModel
 )
 
-from aniemore.custom.models import BaseMultiModalForSequenceBaseClassification
+from aniemore.custom.modeling_classificators import BaseMultiModalForSequenceBaseClassification
 from aniemore.models import Model
 
 RecognizerOutputOne: Type[Dict[str, float]] = dict
@@ -78,7 +78,7 @@ class BaseRecognizer:
         try:
             self.config = AutoConfig.from_pretrained(self.model_url)
             self._model = self.model_cls.from_pretrained(self.model_url, config=self.config)
-        except Exception as exc:  # TODO: needs more precise exception work
+        except (RuntimeError, ValueError) as exc:
             self.config = AutoConfig.from_pretrained(self.model_url, trust_remote_code=True)
             self._model = self.model_cls.from_pretrained(
                 self.model_url, trust_remote_code=True, config=self.config
