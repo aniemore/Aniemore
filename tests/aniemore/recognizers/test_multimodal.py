@@ -13,7 +13,7 @@ from aniemore.models import HuggingFaceModel
 TESTS_DIR = Path(__file__).parent
 TEST_VOICE_DATA_PATH = str(TESTS_DIR / 'src' / 'my_voice.ogg')
 
-GENERAL_WAVLM_BERT_MODEL = HuggingFaceModel.MultiModal.WavLMBertBase
+GENERAL_WAVLM_BERT_MODEL = HuggingFaceModel.MultiModal.WavLMBertFusion
 
 
 @pytest.fixture(autouse=True)
@@ -35,9 +35,9 @@ def test_create_empty():
 def test_create_dummy_voice_text():
     vtr = VoiceTextRecognizer(model=GENERAL_WAVLM_BERT_MODEL)
 
-    assert vtr.model_url == HuggingFaceModel.MultiModal.WavLMBertBase.model_url
+    assert vtr.model_url == GENERAL_WAVLM_BERT_MODEL.model_url
 
-    assert vtr.model_cls == HuggingFaceModel.MultiModal.WavLMBertBase.model_cls
+    assert vtr.model_cls == GENERAL_WAVLM_BERT_MODEL.model_cls
 
     del vtr
 
@@ -45,9 +45,9 @@ def test_create_dummy_voice_text():
 def test_create_dummy_multimodal():
     mr = MultiModalRecognizer(model=GENERAL_WAVLM_BERT_MODEL, s2t_model=SmallSpeech2Text())
 
-    assert mr.model_url == HuggingFaceModel.MultiModal.WavLMBertBase.model_url
+    assert mr.model_url == GENERAL_WAVLM_BERT_MODEL.model_url
 
-    assert mr.model_cls == HuggingFaceModel.MultiModal.WavLMBertBase.model_cls
+    assert mr.model_cls == GENERAL_WAVLM_BERT_MODEL.model_cls
 
     assert isinstance(mr.s2t_model, Speech2Text)
 

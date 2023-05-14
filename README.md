@@ -49,7 +49,7 @@ Aniemore содержит свой собственный датасет RESD (R
 | [**wavlm-emotion-russian-resd**](https://huggingface.co/Aniemore/wavlm-emotion-russian-resd)                                     | 82%      |
 | [**hubert-emotion-russian-resd**](https://huggingface.co/Aniemore/hubert-emotion-russian-resd)                                   | 75%      |
 | [**unispeech-sat-emotion-russian-resd Copied**](https://huggingface.co/Aniemore/unispeech-sat-emotion-russian-resd)              | 72%      |
-| [**wavlm-bert-base**](Aniemore/wavlm-bert-base-s-emotion-russian-resd)                                                           | 81%      |
+| [**wavlm-bert-base**](https://huggingface.co/Aniemore/wavlm-bert-base-s-emotion-russian-resd)                                                           | 81%      |
 | [**wavlm-bert-fusion**](https://huggingface.co/Aniemore/wavlm-bert-fusion-s-emotion-russian-resd)                                | 83%      |
 | Текстовые модели                                                                                                                 |          |
 | [**rubert-base-emotion-russian-cedr-m7**](https://huggingface.co/Aniemore/rubert-base-emotion-russian-cedr-m7)                   | 74%      |
