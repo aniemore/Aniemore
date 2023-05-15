@@ -97,6 +97,17 @@ class FusionModuleQ(torch.nn.Module):
         self.audio_norm = torch.nn.LayerNorm(self.dimension)
         self.text_norm = torch.nn.LayerNorm(self.dimension)
 
+    def forward(self, audio_output, text_output):
+        # Multihead cross attention (dims ARE switched)
+        audio_attn, _ = self.a_self_attention(audio_output, text_output, text_output)
+        text_attn, _ = self.t_self_attention(text_output, audio_output, audio_output)
+
+        # Add & Norm with dropout
+        audio_add = self.audio_norm(audio_output + audio_attn)
+        text_add = self.text_norm(text_output + text_attn)
+
+        return audio_add, text_add
+
 
 class WavLMForVoiceClassification(BaseModelForVoiceBaseClassification):
     """WavLMForVoiceClassification is a model for voice classification task
