@@ -1,0 +1,43 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Aniemore
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ilya
+    family-names: Lubenets
+    email: lubenets.ilya.igorevich@gmail.com
+    orcid: 'https://orcid.org/0009-0005-9507-6669'
+  - given-names: Nikita
+    family-names: Davidchuk
+    email: davidchuk.no@gmail.com
+    orcid: 'https://orcid.org/0009-0002-0016-1333'
+  - given-names: Artem
+    family-names: Amentes
+    email: artem.amentes@gmail.com
+    orcid: 'https://orcid.org/0000-0002-0468-3078'
+identifiers:
+  - type: url
+    value: 'https://github.com/aniemore/Aniemore'
+    description: GitHub
+  - type: url
+    value: 'https://huggingface.co/Aniemore'
+    description: HuggingFace
+repository-code: 'https://github.com/aniemore/Aniemore'
+repository: 'https://huggingface.co/Aniemore'
+abstract: >-
+  Aniemore is an open source artificial intelligence library
+  for streaming emotion analytics of human speech.
+keywords:
+  - emotion recognition
+  - AI
+  - machine learning
+  - russian language
+  - text classification
+  - audio classification
+  - SER
+license: MIT
