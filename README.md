@@ -159,7 +159,7 @@ mr.recognize('/content/ваш-звуковой-файл.wav', return_single_labe
 от 22.12.2021).
 
 ## Цитирование
-Для цитировация воспользуйтесь пунктом `Cite this repository` в правом меню `About` этого проэкта, или скопируйте информацию ниже:
+Для цитировация воспользуйтесь пунктом `Cite this repository` в правом меню `About` этого проекта, или скопируйте информацию ниже:
 ```bibtex
 @software{Lubenets_Aniemore,
 author = {Lubenets, Ilya and Davidchuk, Nikita and Amentes, Artem},
