@@ -159,14 +159,12 @@ mr.recognize('/content/ваш-звуковой-файл.wav', return_single_labe
 от 22.12.2021).
 
 ## Цитирование
-```
-@misc{Aniemore,
-  author = {Артем Аментес, Илья Лубенец, Никита Давидчук},
-  title = {Открытая библиотека искусственного интеллекта для анализа и выявления эмоциональных оттенков речи человека},
-  year = {2022},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/aniemore/Aniemore}},
-  email = {hello@socialcode.ru}
+Для цитировация воспользуйтесь пунктом `Cite this repository` в правом меню `About` этого проэкта, или скопируйте информацию ниже:
+```bibtex
+@software{Lubenets_Aniemore,
+author = {Lubenets, Ilya and Davidchuk, Nikita and Amentes, Artem},
+license = {MIT},
+title = {{Aniemore}},
+url = {https://github.com/aniemore/Aniemore}
 }
 ```
